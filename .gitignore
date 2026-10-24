@@ -1,0 +1,11 @@
+# Zavisnosti i build
+node_modules
+dist
+
+# Lokalno
+.env.local
+.firebase
+.claude
+*-debug.log
+__pycache__
+*.zip

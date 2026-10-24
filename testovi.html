@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="bs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Online testovi za vozački ispit · Autoškola „Edukacija – Drobo“</title>
+  <meta name="description" content="Besplatne lekcije i simulacije vozačkog ispita za A, B, C, D i T kategoriju, saobraćajne znakove, raskrsnice i prvu pomoć, sa pitanjima iz zvaničnog kataloga." />
+  <meta name="theme-color" content="#16171b" />
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap&subset=latin-ext" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/styles/main.css" />
+  <link rel="stylesheet" href="/src/styles/quiz.css" />
+</head>
+<body class="page-solid-header quiz-page">
+  <a class="skip-link" href="#app">Preskoči na sadržaj</a>
+  <main id="app" tabindex="-1">
+    <div class="quiz-loading" role="status"><span class="spinner" aria-hidden="true"></span> Učitavam pitanja…</div>
+  </main>
+
+  <dialog class="lightbox" id="lightbox" aria-label="Uvećana slika">
+    <button class="lightbox-close" type="button" aria-label="Zatvori">✕</button>
+    <img alt="" />
+  </dialog>
+
+  <script type="module" src="/src/pages/testovi.js"></script>
+</body>
+</html>

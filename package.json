@@ -1,0 +1,24 @@
+{
+  "name": "autoskola-edukacija-drobo",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:emulator": "vite --mode emulator",
+    "build": "vite build",
+    "preview": "vite preview",
+    "emulators": "npx firebase-tools emulators:start --project demo-drobo --only auth,firestore",
+    "seed:emulator": "node scripts/seed-emulator.mjs",
+    "deploy:rules": "npx firebase-tools deploy --only firestore"
+  },
+  "dependencies": {
+    "firebase": "^13.1.0"
+  },
+  "devDependencies": {
+    "vite": "^8.3.5"
+  },
+  "engines": {
+    "node": ">=22.12"
+  }
+}

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="bs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ispitni rokovi · Autoškola „Edukacija – Drobo“ Travnik</title>
+  <meta name="description" content="Termini teorijskih ispita, ispita iz prve pomoći i ispita iz vožnje za sve kategorije, Autoškola Edukacija – Drobo, Travnik." />
+  <meta name="theme-color" content="#16171b" />
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap&subset=latin-ext" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/styles/main.css" />
+  <link rel="stylesheet" href="/src/styles/ispiti.css" />
+</head>
+<body class="page-solid-header">
+  <a class="skip-link" href="#sadrzaj">Preskoči na sadržaj</a>
+  <main id="sadrzaj">
+    <section class="page-hero">
+      <div class="container">
+        <p class="eyebrow">Termini</p>
+        <h1 class="section-title">Ispitni rokovi</h1>
+        <p class="lead">Teorijski ispiti, prva pomoć i vožnja za sve kategorije. Za prijavu na ispit obratite se autoškoli.</p>
+      </div>
+    </section>
+
+    <section class="section section--paper exams-section">
+      <div class="container">
+        <div class="exam-filters" role="group" aria-label="Filteri">
+          <div class="filter-chips" id="type-filter">
+            <button type="button" class="filter-chip is-active" data-type="">Svi ispiti</button>
+            <button type="button" class="filter-chip" data-type="teorija">Teorijski ispit</button>
+            <button type="button" class="filter-chip" data-type="prva_pomoc">Prva pomoć</button>
+            <button type="button" class="filter-chip" data-type="voznja">Vožnja</button>
+          </div>
+          <div class="filter-side">
+            <label class="sr-only" for="cat-filter">Kategorija</label>
+            <select class="select" id="cat-filter"><option value="">Sve kategorije</option></select>
+            <label class="check past-toggle"><input type="checkbox" id="show-past" /> <span>Prikaži protekle</span></label>
+          </div>
+        </div>
+        <div id="exam-list" aria-live="polite"></div>
+        <div class="exam-cta">
+          <div>
+            <h2 class="exam-cta-title">Spremi se za ispit</h2>
+            <p>Provjeri znanje na simulaciji ispita sa pitanjima iz zvaničnog kataloga.</p>
+          </div>
+          <a class="btn btn-primary btn-lg" href="/testovi#/test">Simulacija ispita</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="/src/pages/ispiti.js"></script>
+</body>
+</html>

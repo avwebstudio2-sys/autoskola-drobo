@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="bs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Administracija · Autoškola „Edukacija – Drobo“</title>
+  <meta name="theme-color" content="#16171b" />
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap&subset=latin-ext" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/styles/main.css" />
+  <link rel="stylesheet" href="/src/styles/admin.css" />
+</head>
+<body class="admin-page">
+  <div id="admin-root">
+    <div class="quiz-loading admin-loading" role="status"><span class="spinner" aria-hidden="true"></span> Učitavam…</div>
+  </div>
+
+  <dialog class="admin-dialog" id="edit-dialog" aria-labelledby="edit-title">
+    <form method="dialog" class="dialog-form" id="edit-form" novalidate>
+      <header class="dialog-head">
+        <h2 id="edit-title">Uredi</h2>
+        <button type="button" class="icon-btn" data-close aria-label="Zatvori"></button>
+      </header>
+      <div class="dialog-body form-grid" id="edit-fields"></div>
+      <footer class="dialog-foot">
+        <button type="button" class="btn btn-ghost btn-sm" data-close>Odustani</button>
+        <button type="submit" class="btn btn-primary btn-sm" value="save">Sačuvaj</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <script type="module" src="/src/pages/admin.js"></script>
+</body>
+</html>

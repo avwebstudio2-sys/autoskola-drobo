@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="bs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Autoškola „Edukacija – Drobo“ Travnik · Teorija, vožnja i online testovi</title>
+  <meta name="description" content="Autoškola Edukacija – Drobo iz Travnika: teorijska i praktična nastava za sve kategorije, besplatno online učenje testova, ispitni rokovi i online upis kandidata." />
+  <meta name="theme-color" content="#16171b" />
+  <meta property="og:title" content="Autoškola „Edukacija – Drobo“ Travnik" />
+  <meta property="og:description" content="Edukacija – Kandidat – Sigurnost. Teorija, vožnja za sve kategorije i besplatni online testovi." />
+  <meta property="og:image" content="/img/logo-original.jpg" />
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap&subset=latin-ext" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/styles/main.css" />
+  <link rel="stylesheet" href="/src/styles/home.css" />
+</head>
+<body>
+  <a class="skip-link" href="#sadrzaj">Preskoči na sadržaj</a>
+
+  <!-- HERO: video/animacija ceste koja se pomjera skrolanjem -->
+  <section class="hero" id="pocetak" aria-label="Uvod">
+    <div class="hero-sticky">
+      <div class="hero-media" aria-hidden="true">
+        <canvas class="hero-canvas"></canvas>
+        <video class="hero-video" muted playsinline preload="auto" disablepictureinpicture></video>
+      </div>
+      <div class="hero-shade" aria-hidden="true"></div>
+
+      <div class="container hero-content">
+        <div class="hero-stage" data-stage="0">
+          <a class="hero-announce" id="announcement" href="#upis" hidden></a>
+          <p class="eyebrow">Autoškola · Travnik</p>
+          <h1 class="hero-title display">Edukacija.<br />Kandidat.<br /><span class="text-red">Sigurnost.</span></h1>
+          <p class="hero-text" data-setting="heroText">Teorijska i praktična nastava za sve kategorije u Travniku, uz besplatno online učenje testova.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary btn-lg btn-pulse" href="/testovi">Vježbaj testove besplatno</a>
+            <a class="btn btn-ghost btn-lg" href="#upis">Upiši se</a>
+          </div>
+        </div>
+        <div class="hero-stage" data-stage="1">
+          <p class="eyebrow">Teorija i vožnja</p>
+          <p class="hero-title display">Sve kategorije.<br /><span class="text-red">Jedan put.</span></p>
+          <p class="hero-text">Od mopeda i automobila do kamiona, autobusa i traktora. Vodimo vas od prvog časa do položenog ispita.</p>
+        </div>
+        <div class="hero-stage" data-stage="2">
+          <p class="eyebrow">Online učenje</p>
+          <p class="hero-title display"><span data-count="total">769</span> pitanja.<br /><span class="text-red">Spreman za ispit?</span></p>
+          <p class="hero-text">Lekcije i simulacije ispita sa svim pitanjima iz zvaničnog kataloga, uključujući znakove, raskrsnice i prvu pomoć.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary btn-lg" href="/testovi#/test">Pokreni simulaciju ispita</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-progress" aria-hidden="true"><span class="hero-progress-bar"></span></div>
+      <a class="hero-scroll" href="#online"><span>Skrolaj</span><span class="hero-scroll-line" aria-hidden="true"></span></a>
+    </div>
+  </section>
+
+  <main id="sadrzaj">
+    <!-- ONLINE UČENJE: glavni CTA -->
+    <section class="section section--red online-band" id="online" aria-labelledby="online-title">
+      <div class="container online-grid">
+        <div data-reveal>
+          <p class="eyebrow">Besplatno online učenje</p>
+          <h2 class="section-title" id="online-title">Uči testove<br />gdje god da si.</h2>
+          <p class="lead">Pitanja iz zvaničnog kataloga, podijeljena u lekcije po kategorijama, s posebnim lekcijama za znakove i raskrsnice. Kad si spreman, provjeri se na simulaciji pravog ispita.</p>
+          <div class="online-actions">
+            <a class="btn btn-light btn-lg" href="/testovi#/lekcije">Lekcije</a>
+            <a class="btn btn-dark btn-lg" href="/testovi#/test">Simulacija ispita</a>
+          </div>
+        </div>
+        <ul class="online-stats" aria-label="Broj pitanja po oblastima">
+          <li data-reveal="1"><a href="/testovi#/lekcije/B"><span class="stat-icon" data-icon="book"></span><strong data-count="teorija">450</strong><span>pitanja teorije</span></a></li>
+          <li data-reveal="2"><a href="/testovi#/lekcije/znakovi"><span class="stat-icon" data-icon="sign"></span><strong data-count="znakovi">109</strong><span>saobraćajnih znakova</span></a></li>
+          <li data-reveal="3"><a href="/testovi#/lekcije/raskrsnice"><span class="stat-icon" data-icon="cross"></span><strong data-count="raskrsnice">110</strong><span>raskrsnica</span></a></li>
+          <li data-reveal="4"><a href="/testovi#/lekcije/prva-pomoc"><span class="stat-icon" data-icon="aid"></span><strong data-count="prvaPomoc">100</strong><span>pitanja prve pomoći</span></a></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- USLUGE -->
+    <section class="section section--paper" id="usluge" aria-labelledby="usluge-title">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <p class="eyebrow">Usluge</p>
+          <h2 class="section-title" id="usluge-title">Sve što treba<br />za vozačku dozvolu.</h2>
+        </div>
+        <div class="services-grid" id="services-list"></div>
+      </div>
+    </section>
+
+    <!-- KATEGORIJE -->
+    <section class="section section--dark" id="kategorije" aria-labelledby="kategorije-title">
+      <div class="container">
+        <div class="section-head section-head--split" data-reveal>
+          <div>
+            <p class="eyebrow">Praktična nastava</p>
+            <h2 class="section-title" id="kategorije-title">Obuka za<br />sve kategorije.</h2>
+          </div>
+          <a class="btn btn-primary" href="#upis">Prijavi se za obuku</a>
+        </div>
+        <ul class="category-grid" id="categories-list"></ul>
+      </div>
+    </section>
+
+    <div class="road-divider road-divider--red" aria-hidden="true"></div>
+
+    <!-- TERMINI ČASOVA -->
+    <section class="section section--paper" id="casovi" aria-labelledby="casovi-title">
+      <div class="container">
+        <div class="section-head section-head--split" data-reveal>
+          <div>
+            <p class="eyebrow">Raspored</p>
+            <h2 class="section-title" id="casovi-title">Termini časova</h2>
+            <p class="lead">Teorijska nastava održava se po rasporedu ispod. Termine praktične nastave dogovarate direktno sa instruktorom.</p>
+          </div>
+        </div>
+        <div id="schedule-list"></div>
+      </div>
+    </section>
+
+    <!-- ISPITNI ROKOVI (pregled) -->
+    <section class="section section--darker" id="rokovi" aria-labelledby="rokovi-title">
+      <div class="container">
+        <div class="section-head section-head--split" data-reveal>
+          <div>
+            <p class="eyebrow">Ispitni rokovi</p>
+            <h2 class="section-title" id="rokovi-title">Naredni ispiti</h2>
+          </div>
+          <a class="link-arrow" href="/ispiti">Svi ispitni rokovi <span data-icon="arrow"></span></a>
+        </div>
+        <ul class="exam-preview" id="exam-preview"></ul>
+      </div>
+    </section>
+
+    <!-- UPIS -->
+    <section class="section section--dark upis" id="upis" aria-labelledby="upis-title">
+      <div class="container upis-grid">
+        <div class="upis-intro" data-reveal>
+          <p class="eyebrow">Upis kandidata</p>
+          <h2 class="section-title" id="upis-title">Prijavi se<br />za nekoliko minuta.</h2>
+          <p class="lead">Popuni formu, a mi te pozivamo radi potvrde termina i daljih uputa.</p>
+          <ol class="steps">
+            <li><span class="step-n">1</span><div><strong>Online prijava</strong><p>Pošalji osnovne podatke putem forme.</p></div></li>
+            <li><span class="step-n">2</span><div><strong>Potvrda telefonom</strong><p>Javljamo se i dogovaramo početak nastave.</p></div></li>
+            <li><span class="step-n">3</span><div><strong>Dokumentacija</strong><p>Doneseš ljekarsko uvjerenje i kopiju lične karte.</p></div></li>
+            <li><span class="step-n">4</span><div><strong>Početak nastave</strong><p>Teorija, prva pomoć i vožnja, korak po korak.</p></div></li>
+          </ol>
+        </div>
+
+        <div class="card upis-card" data-reveal="1">
+          <form id="enroll-form" class="form-grid" novalidate>
+            <h3 class="form-title">Prijava za upis</h3>
+            <div class="field">
+              <label for="f-name">Ime i prezime <span class="req" aria-hidden="true">*</span></label>
+              <input class="input" id="f-name" name="fullName" autocomplete="name" required minlength="3" maxlength="120" aria-describedby="f-name-err" />
+              <p class="field-error" id="f-name-err">Upišite ime i prezime.</p>
+            </div>
+            <div class="form-row">
+              <div class="field">
+                <label for="f-dob">Datum rođenja <span class="req" aria-hidden="true">*</span></label>
+                <input class="input" id="f-dob" name="dob" type="date" autocomplete="bday" required aria-describedby="f-dob-err" />
+                <p class="field-error" id="f-dob-err">Unesite ispravan datum rođenja.</p>
+              </div>
+              <div class="field">
+                <label for="f-phone">Broj telefona <span class="req" aria-hidden="true">*</span></label>
+                <input class="input" id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="06x xxx xxx" required aria-describedby="f-phone-err" />
+                <p class="field-error" id="f-phone-err">Unesite broj telefona (najmanje 6 cifara).</p>
+              </div>
+            </div>
+            <div class="field">
+              <label for="f-category">Kategorija</label>
+              <select class="select" id="f-category" name="category"></select>
+            </div>
+            <fieldset class="field fieldset-reset">
+              <legend class="label">Šta želite polagati? <span class="req" aria-hidden="true">*</span></legend>
+              <div class="segmented">
+                <input type="radio" name="program" id="p-tv" value="teorija_voznja" checked />
+                <label for="p-tv"><strong>Teorija i vožnja</strong><span>Kompletna obuka kod nas</span></label>
+                <input type="radio" name="program" id="p-t" value="teorija" />
+                <label for="p-t"><strong>Samo teorija</strong><span>Vožnju pohađam drugdje</span></label>
+              </div>
+            </fieldset>
+            <div class="field" id="other-school-field" hidden>
+              <label for="f-school">Naziv autoškole u kojoj pohađate praktičnu nastavu</label>
+              <input class="input" id="f-school" name="otherSchool" maxlength="120" placeholder="Ako je pohađate" />
+              <p class="hint">Ostavite prazno ako još niste upisali praktičnu nastavu.</p>
+            </div>
+            <div class="field">
+              <label class="check" for="f-consent">
+                <input type="checkbox" id="f-consent" name="consent" required aria-describedby="f-consent-err" />
+                <span>Saglasan/na sam da autoškola koristi moje podatke isključivo radi upisa i kontakta.</span>
+              </label>
+              <p class="field-error" id="f-consent-err">Potrebna je vaša saglasnost.</p>
+            </div>
+            <button class="btn btn-primary btn-lg" type="submit">Pošalji prijavu</button>
+            <p class="form-status" id="enroll-status" role="status" aria-live="polite"></p>
+          </form>
+
+          <div class="enroll-success" id="enroll-success" hidden tabindex="-1">
+            <div class="success-badge" data-icon="check"></div>
+            <h3 class="form-title">Prijava je poslana!</h3>
+            <p>Hvala, <strong id="success-name"></strong>. Javićemo vam se na broj <strong id="success-phone"></strong>.</p>
+            <div class="docs-box">
+              <h4><span data-icon="file"></span> Prije početka nastave pripremite:</h4>
+              <ul class="docs-list" id="docs-list"></ul>
+              <p class="docs-note" id="docs-note"></p>
+            </div>
+            <div class="success-actions">
+              <button class="btn btn-dark" type="button" id="print-docs"><span data-icon="printer"></span> Isprintaj uputstvo</button>
+              <a class="btn btn-primary" href="/testovi">Počni učiti testove</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section section--paper" id="faq" aria-labelledby="faq-title">
+      <div class="container faq-grid">
+        <div data-reveal>
+          <p class="eyebrow">Česta pitanja</p>
+          <h2 class="section-title" id="faq-title">Imaš pitanje?</h2>
+          <p class="lead">Ako ne nađeš odgovor, nazovi nas, rado ćemo pomoći.</p>
+          <a class="btn btn-dark" data-phone-link href="#kontakt"><span data-icon="phone"></span> <span data-setting="phone">030 501-433</span></a>
+        </div>
+        <div class="faq-list" id="faq-list"></div>
+      </div>
+    </section>
+
+    <!-- KONTAKT -->
+    <section class="section section--darker" id="kontakt" aria-labelledby="kontakt-title">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <p class="eyebrow">Kontakt</p>
+          <h2 class="section-title" id="kontakt-title">Navrati ili nazovi.</h2>
+        </div>
+        <div class="contact-grid">
+          <ul class="contact-cards" id="contact-cards"></ul>
+          <div class="map-wrap" data-reveal="1">
+            <iframe id="map-frame" title="Lokacija autoškole na karti" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+          <form class="card card--dark contact-form form-grid" id="contact-form" novalidate data-reveal="2">
+            <h3 class="form-title">Pošalji poruku</h3>
+            <div class="field">
+              <label for="c-name">Ime</label>
+              <input class="input input--dark" id="c-name" name="name" required minlength="2" maxlength="120" autocomplete="name" />
+              <p class="field-error">Upišite ime.</p>
+            </div>
+            <div class="field">
+              <label for="c-contact">Telefon ili e-mail</label>
+              <input class="input input--dark" id="c-contact" name="contact" required minlength="5" maxlength="120" />
+              <p class="field-error">Upišite telefon ili e-mail.</p>
+            </div>
+            <div class="field">
+              <label for="c-message">Poruka</label>
+              <textarea class="textarea textarea--dark" id="c-message" name="message" required minlength="5" maxlength="2000"></textarea>
+              <p class="field-error">Napišite poruku.</p>
+            </div>
+            <button class="btn btn-primary" type="submit">Pošalji poruku</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="/src/pages/home.js"></script>
+</body>
+</html>

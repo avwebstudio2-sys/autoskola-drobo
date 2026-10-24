@@ -1,0 +1,75 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Administrator je korisnik čiji UID postoji u kolekciji "admins".
+    // Dokument admins/{uid} dodaje se ručno u Firebase konzoli (vidi README).
+    function isAdmin() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    function str(v, min, max) {
+      return v is string && v.size() >= min && v.size() <= max;
+    }
+
+    match /admins/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    // Javni sadržaj: svi čitaju, samo admin mijenja
+    match /settings/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /services/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /categories/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /faq/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /classSchedule/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /examDates/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Prijave za upis: svako može poslati, samo admin čita i uređuje
+    match /enrollments/{id} {
+      allow create: if request.resource.data.keys().hasOnly(
+            ['fullName', 'dob', 'phone', 'category', 'program', 'otherSchool', 'consent', 'createdAt', 'status'])
+        && str(request.resource.data.fullName, 3, 120)
+        && str(request.resource.data.dob, 10, 10)
+        && str(request.resource.data.phone, 6, 30)
+        && str(request.resource.data.category, 0, 40)
+        && request.resource.data.program in ['teorija', 'teorija_voznja']
+        && str(request.resource.data.otherSchool, 0, 120)
+        && request.resource.data.consent == true
+        && request.resource.data.status == 'nova'
+        && request.resource.data.createdAt == request.time;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Poruke iz kontakt forme
+    match /messages/{id} {
+      allow create: if request.resource.data.keys().hasOnly(['name', 'contact', 'message', 'createdAt', 'read'])
+        && str(request.resource.data.name, 2, 120)
+        && str(request.resource.data.contact, 5, 120)
+        && str(request.resource.data.message, 5, 2000)
+        && request.resource.data.read == false
+        && request.resource.data.createdAt == request.time;
+      allow read, update, delete: if isAdmin();
+    }
+  }
+}
