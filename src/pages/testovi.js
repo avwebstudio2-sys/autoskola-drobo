@@ -1,8 +1,10 @@
 import { renderHeader, renderFooter, icon, esc, toast } from '../lib/ui.js';
 import { getSettings } from '../lib/content.js';
+import { SETS, questionsForSet, quizHubHTML } from '../lib/render.js';
 
 /* ==========================================================================
    Online učenje: lekcije i simulacije ispita (po uzoru na driver.ba/testovi)
+   Pregled kategorija je već upisan u HTML pri buildu; ovdje se dodaje ponašanje.
    Rute (hash):
      #/                       pregled (zadano: lekcije)
      #/lekcije | #/test       pregled sa odabranim načinom
@@ -11,21 +13,11 @@ import { getSettings } from '../lib/content.js';
      #/test/:set              simulacija ispita
    ========================================================================== */
 
-const SETS = {
-  A: { label: 'A kategorija', sub: 'Mopedi i motocikli (AM, A1, A2, A)', kind: 'theory', cat: 'A', size: 20, icon: 'wheel' },
-  B: { label: 'B kategorija', sub: 'Putnički automobili (B1, B, BE)', kind: 'theory', cat: 'B', size: 20, icon: 'wheel' },
-  C: { label: 'C kategorija', sub: 'Teretna vozila (C1, C, CE)', kind: 'theory', cat: 'C', size: 20, icon: 'wheel' },
-  D: { label: 'D kategorija', sub: 'Autobusi (D1, D, DE)', kind: 'theory', cat: 'D', size: 20, icon: 'wheel' },
-  T: { label: 'T kategorija', sub: 'Traktori i radne mašine', kind: 'theory', cat: 'T', size: 20, icon: 'wheel' },
-  znakovi: { label: 'Saobraćajni znakovi', sub: 'Značenje znakova i postupanje', kind: 'signs', size: 10, icon: 'sign' },
-  raskrsnice: { label: 'Raskrsnice', sub: 'Prvenstvo prolaza i redoslijed vozila', kind: 'intersections', size: 10, icon: 'cross' },
-  'prva-pomoc': { label: 'Prva pomoć', sub: 'Ispit iz pružanja prve pomoći', kind: 'firstaid', size: 20, icon: 'aid' },
-};
-
 const AREA_LABEL = { t: 'Teorija', z: 'Znak', r: 'Raskrsnica', pp: 'Prva pomoć' };
 const STORE_KEY = 'drobo-progress-v1';
 
 const app = document.getElementById('app');
+const BASE_TITLE = document.title;
 renderHeader('testovi');
 
 let data;
@@ -46,14 +38,7 @@ route();
 
 /* ---------- Pomoćne ---------- */
 
-function questionsFor(key) {
-  const set = SETS[key];
-  if (!set) return [];
-  if (set.kind === 'theory') return data.teorija.filter((q) => q.cats.includes(set.cat));
-  if (set.kind === 'signs') return data.znakovi;
-  if (set.kind === 'intersections') return data.raskrsnice;
-  return data.prvaPomoc;
-}
+const questionsFor = (key) => questionsForSet(data, key);
 
 function lessonsFor(key) {
   const qs = questionsFor(key);
@@ -95,6 +80,8 @@ function saveProgress(p) {
 
 const isCorrect = (q, selected) => selected && selected.size === q.c.length && q.c.every((i) => selected.has(i));
 const imgSrc = (q) => (q.img ? `/img/pitanja/${q.img}` : '');
+const imgAlt = (q) => `${q.area === 'r' ? 'Saobraćajna situacija na raskrsnici' : 'Saobraćajni znak'} uz pitanje ${q.n}`;
+const imgSize = (q) => (q.w ? ` width="${q.w}" height="${q.h}"` : '');
 
 function setTitle(t) { document.title = `${t} · Autoškola „Edukacija – Drobo“`; }
 
@@ -119,66 +106,9 @@ function route() {
 /* ---------- Pregled ---------- */
 
 function renderHub(mode) {
-  setTitle(mode === 'test' ? 'Simulacija vozačkog ispita' : 'Lekcije za vozački ispit');
-  const progress = loadProgress();
-  const total = data.teorija.length + data.znakovi.length + data.raskrsnice.length + data.prvaPomoc.length;
-
-  const cards = Object.entries(SETS).map(([key, set], i) => {
-    const lessons = lessonsFor(key);
-    const done = lessons.filter((_, li) => progress.lessons[`${key}-${li + 1}`]?.done).length;
-    const best = progress.tests[key]?.best;
-    const pct = Math.round((done / lessons.length) * 100);
-    const count = questionsFor(key).length;
-    const href = mode === 'test' ? `#/test/${key}` : `#/lekcije/${key}`;
-    const meta = mode === 'test'
-      ? (set.kind === 'theory'
-        ? `${settings.testTheory} teorija + ${settings.testSigns} znakova + ${settings.testIntersections} raskrsnica`
-        : `${set.kind === 'firstaid' ? settings.firstAidCount : 20} nasumičnih pitanja`)
-      : `${count} pitanja · ${lessons.length} lekcija`;
-    return `
-      <li class="set-card${set.kind === 'theory' ? '' : ' set-card--special'}" style="--i:${i}">
-        <a href="${href}">
-          <span class="set-icon">${set.kind === 'theory' ? `<span class="set-letter">${esc(set.cat)}</span>` : icon(set.icon, { size: 28 })}</span>
-          <span class="set-body">
-            <strong>${esc(set.label)}</strong>
-            <span>${esc(set.sub)}</span>
-            <small>${meta}</small>
-          </span>
-          <span class="set-foot">
-            ${mode === 'test'
-              ? (best != null ? `<span class="chip ${best >= settings.passPercent ? 'chip--ok' : ''}">Najbolje: ${best}%</span>` : '<span class="chip chip--muted">Još niste radili</span>')
-              : `<span class="set-progress" aria-label="Završeno ${done} od ${lessons.length} lekcija"><span style="width:${pct}%"></span></span><span class="set-progress-label">${done}/${lessons.length}</span>`}
-            <span class="set-go" aria-hidden="true">${icon('arrow', { size: 20 })}</span>
-          </span>
-        </a>
-      </li>`;
-  }).join('');
-
-  app.innerHTML = `
-    <section class="page-hero quiz-hero">
-      <div class="container">
-        <p class="eyebrow">Online učenje testova</p>
-        <h1 class="section-title">${mode === 'test' ? 'Simulacija ispita' : 'Lekcije za vozački'}</h1>
-        <p class="lead">${total} pitanja iz zvaničnog kataloga ispitnih pitanja (teorija, znakovi, raskrsnice i prva pomoć). Napredak se čuva na ovom uređaju.</p>
-        <div class="mode-switch" role="tablist" aria-label="Način učenja">
-          <a role="tab" href="#/lekcije" aria-selected="${mode !== 'test'}" class="${mode !== 'test' ? 'is-active' : ''}">
-            ${icon('book', { size: 22 })}<span><strong>Lekcije</strong><small>Uči sa provjerom odgovora</small></span>
-          </a>
-          <a role="tab" href="#/test" aria-selected="${mode === 'test'}" class="${mode === 'test' ? 'is-active' : ''}">
-            ${icon('timer', { size: 22 })}<span><strong>Simulacija ispita</strong><small>Kao na pravom ispitu</small></span>
-          </a>
-        </div>
-      </div>
-    </section>
-    <section class="section section--paper quiz-sets">
-      <div class="container">
-        ${mode === 'test'
-          ? `<div class="info-strip">${icon('trophy')}<p>Test za kategoriju sadrži <strong>${settings.testTheory} pitanja teorije, ${settings.testSigns} znakova i ${settings.testIntersections} raskrsnica</strong>. Za prolaz je potrebno najmanje <strong>${settings.passPercent}%</strong> tačnih odgovora. Pitanja s više tačnih odgovora su označena.</p></div>`
-          : `<div class="info-strip">${icon('check')}<p>Odaberi odgovor i klikni <strong>Provjeri</strong>: tačan odgovor se odmah prikaže. Lekcije za teoriju sadrže po ${SETS.B.size} pitanja, a znakovi i raskrsnice po ${SETS.znakovi.size}.</p></div>`}
-        <h2 class="sets-title">Kategorije</h2>
-        <ul class="set-grid">${cards}</ul>
-      </div>
-    </section>`;
+  if (mode === 'test') setTitle('Simulacija vozačkog ispita');
+  else document.title = BASE_TITLE;
+  app.innerHTML = quizHubHTML({ mode, data, settings, progress: loadProgress() });
 }
 
 /* ---------- Lista lekcija ---------- */
@@ -416,7 +346,7 @@ function createRunner(cfg) {
           <ul class="opts" role="${multi ? 'group' : 'radiogroup'}" aria-labelledby="q-text">${options}</ul>
           ${checked ? `<p class="verdict ${verdict ? 'is-ok' : 'is-bad'}" role="status">${verdict ? `${icon('check')} Tačno!` : `${icon('x')} Netačno. Tačan odgovor je označen zelenom bojom.`}</p>` : ''}
         </div>
-        ${q.img ? `<figure class="q-figure"><button type="button" class="q-zoom" aria-label="Uvećaj sliku"><img src="${imgSrc(q)}" alt="Slika uz pitanje ${q.n}" loading="eager" />${icon('zoom', { size: 20 })}</button></figure>` : ''}
+        ${q.img ? `<figure class="q-figure"><button type="button" class="q-zoom" aria-label="Uvećaj sliku"><img src="${imgSrc(q)}" alt="${imgAlt(q)}"${imgSize(q)} loading="eager" />${icon('zoom', { size: 20 })}</button></figure>` : ''}
       </article>
       <div class="runner-actions">
         <button type="button" class="btn btn-ghost btn-prev" ${i === 0 ? 'disabled' : ''}>${icon('chevronLeft', { size: 18 })} Prethodno</button>
@@ -429,7 +359,7 @@ function createRunner(cfg) {
     body.querySelector('.btn-main').addEventListener('click', primary);
     body.querySelector('.btn-prev').addEventListener('click', () => go(i - 1));
     body.querySelector('.btn-finish')?.addEventListener('click', confirmFinish);
-    body.querySelector('.q-zoom')?.addEventListener('click', () => openLightbox(imgSrc(q), `Slika uz pitanje ${q.n}`));
+    body.querySelector('.q-zoom')?.addEventListener('click', () => openLightbox(imgSrc(q), imgAlt(q)));
   }
 
   function finish() {
@@ -486,7 +416,7 @@ function createRunner(cfg) {
                     <ul>${q.a.map((t, oi) => `<li class="${q.c.includes(oi) ? 'is-right' : sel.has(oi) ? 'is-wrong' : ''}">${q.c.includes(oi) ? icon('check', { size: 16 }) : sel.has(oi) ? icon('x', { size: 16 }) : '<span class="dot"></span>'}${esc(t)}</li>`).join('')}</ul>
                     ${!sel.size ? '<p class="review-note">Bez odgovora</p>' : ''}
                   </div>
-                  ${q.img ? `<img src="${imgSrc(q)}" alt="Slika uz pitanje ${q.n}" loading="lazy" />` : ''}
+                  ${q.img ? `<img src="${imgSrc(q)}" alt="${imgAlt(q)}"${imgSize(q)} loading="lazy" />` : ''}
                 </li>`).join('')}
             </ol>` : ''}
         </div>
@@ -508,13 +438,17 @@ function createRunner(cfg) {
 
 function setupLightbox() {
   const dlg = document.getElementById('lightbox');
-  dlg.querySelector('.lightbox-close').innerHTML = icon('x', { size: 24 });
+  if (!dlg.querySelector('.lightbox-close svg')) dlg.querySelector('.lightbox-close').innerHTML = icon('x', { size: 24 });
   dlg.addEventListener('click', (e) => { if (e.target === dlg || e.target.closest('.lightbox-close')) dlg.close(); });
 }
 
 function openLightbox(src, alt) {
   const dlg = document.getElementById('lightbox');
-  const img = dlg.querySelector('img');
+  let img = dlg.querySelector('img');
+  if (!img) {
+    img = document.createElement('img');
+    dlg.append(img);
+  }
   img.src = src;
   img.alt = alt;
   dlg.showModal();

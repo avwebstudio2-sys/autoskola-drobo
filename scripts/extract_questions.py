@@ -8,14 +8,19 @@ Oblast II  - saobraćajni znakovi (sa slikom)
 Oblast III - raskrsnice (sa slikom)
 Oblast IV  - prva pomoć (tabela, tačan odgovor je podebljan)
 
+Slike se spremaju kao WebP (najviše 900 px širine), a širina i visina se upisuju u JSON.
+Potrebno: pip install pymupdf pillow
+
 U Oblastima I-III tačan odgovor je u PDF-u označen iscrtanim "X" preko broja odgovora.
 """
+import io
 import json
 import re
 import sys
 from pathlib import Path
 
 import pymupdf
+from PIL import Image
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT_JSON = ROOT / "public" / "data" / "questions.json"
@@ -82,20 +87,34 @@ def image_rects(page):
     return out
 
 
+MAX_IMG_WIDTH = 900
+
+
+def write_webp(png_or_jpg_bytes, name):
+    """Spremi sliku kao WebP; vrati (ime fajla, širina, visina)."""
+    img = Image.open(io.BytesIO(png_or_jpg_bytes))
+    if img.mode in ("RGBA", "LA", "P"):
+        img = img.convert("RGBA")
+        bg = Image.new("RGB", img.size, (255, 255, 255))
+        bg.paste(img, mask=img.split()[-1])
+        img = bg
+    else:
+        img = img.convert("RGB")
+    if img.width > MAX_IMG_WIDTH:
+        img = img.resize((MAX_IMG_WIDTH, round(img.height * MAX_IMG_WIDTH / img.width)), Image.LANCZOS)
+    path = IMG_DIR / f"{name}.webp"
+    img.save(path, "WEBP", quality=80, method=6)
+    return path.name, img.width, img.height
+
+
 def save_image(doc, xref, name):
     info = doc.extract_image(xref)
-    ext = info["ext"]
-    if ext not in ("png", "jpeg", "jpg"):
-        pix = pymupdf.Pixmap(doc, xref)
-        if pix.alpha or pix.n > 3:
-            pix = pymupdf.Pixmap(pymupdf.csRGB, pix)
-        path = IMG_DIR / f"{name}.png"
-        pix.save(path)
-        return path.name
-    ext = "jpg" if ext == "jpeg" else ext
-    path = IMG_DIR / f"{name}.{ext}"
-    path.write_bytes(info["image"])
-    return path.name
+    if info["ext"] in ("png", "jpeg", "jpg"):
+        return write_webp(info["image"], name)
+    pix = pymupdf.Pixmap(doc, xref)
+    if pix.alpha or pix.n > 3:
+        pix = pymupdf.Pixmap(pymupdf.csRGB, pix)
+    return write_webp(pix.tobytes("png"), name)
 
 
 def split_merged_numbers(spans, max_x):
@@ -190,15 +209,14 @@ def parse_marked_catalog(pdf_path, area, with_images):
                 "c": correct, "multi": multi or len(correct) > 1, "cats": cats}
         seg = next((seg for seg in r["segs"] if seg["img"]), None)
         if seg and len(seg["img"]) == 1 and seg["img"][0][1].width > 40:
-            item["img"] = save_image(doc, seg["img"][0][0], qid)
+            item["img"], item["w"], item["h"] = save_image(doc, seg["img"][0][0], qid)
         elif seg:
             # više manjih slika (npr. dvije table) -> izreži cijelo područje
             clip = pymupdf.Rect(seg["img"][0][1])
             for _, rr in seg["img"][1:]:
                 clip |= rr
-            path = IMG_DIR / f"{qid}.png"
-            doc[seg["pno"]].get_pixmap(dpi=200, clip=clip).save(path)
-            item["img"] = path.name
+            png = doc[seg["pno"]].get_pixmap(dpi=200, clip=clip).tobytes("png")
+            item["img"], item["w"], item["h"] = write_webp(png, qid)
         elif with_images:
             problems.append(f"{qid}: nema slike")
         nums_seq = [n for n, _, _ in answers]

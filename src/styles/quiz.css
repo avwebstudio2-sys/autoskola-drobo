@@ -3,25 +3,6 @@
 .quiz-page { background: var(--paper); }
 .quiz-page #app { outline: none; min-height: 70vh; }
 
-.quiz-loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  min-height: 70vh;
-  color: var(--muted-on-light);
-  font-weight: 600;
-}
-.spinner {
-  width: 26px;
-  height: 26px;
-  border: 3px solid var(--paper-2);
-  border-top-color: var(--red);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-
 .quiz-hero { padding-bottom: clamp(32px, 5vw, 56px); }
 .quiz-hero--compact .section-title { font-size: clamp(2.4rem, 6vw, 4rem); }
 .back-link {
@@ -134,7 +115,7 @@
 }
 .set-letter { font-family: var(--font-display); font-weight: 800; font-size: 2.2rem; line-height: 1; }
 .set-body { display: flex; flex-direction: column; gap: 2px; }
-.set-body strong { font-family: var(--font-display); font-weight: 800; font-size: 1.6rem; text-transform: uppercase; line-height: 1.05; }
+.set-body .set-name { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: 1.6rem; text-transform: uppercase; line-height: 1.05; }
 .set-body span { color: var(--muted-on-light); font-size: 0.95rem; }
 .set-body small { margin-top: 6px; font-weight: 600; font-size: 0.85rem; color: var(--red); }
 .set-card--special .set-body span { color: var(--muted-on-dark); }
@@ -538,7 +519,7 @@ kbd {
   .set-card a { padding: 16px; gap: 12px; }
   .set-icon { width: 46px; height: 46px; border-radius: 13px; }
   .set-letter { font-size: 1.8rem; }
-  .set-body strong { font-size: 1.35rem; }
+  .set-body .set-name { font-size: 1.35rem; }
   .set-go { width: 36px; height: 36px; }
   .lesson-tile { min-height: 64px; padding: 10px 12px; gap: 12px; }
   .lesson-n { width: 40px; height: 40px; font-size: 1.2rem; }

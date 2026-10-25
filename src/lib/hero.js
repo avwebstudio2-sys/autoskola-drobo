@@ -94,9 +94,10 @@ export function initHero(hero) {
 }
 
 function setupVideo(video, onReady) {
-  if (!video) return;
+  // Video se učitava samo ako je naveden u HTML-u (data-src), da nema uzaludnih zahtjeva dok ga nema
+  if (!video?.dataset.src) return;
   const small = matchMedia('(max-width: 720px)').matches;
-  const sources = small ? ['/video/hero-mobile.mp4', '/video/hero.mp4'] : ['/video/hero.mp4'];
+  const sources = [small && video.dataset.srcMobile, video.dataset.src].filter(Boolean);
   let i = 0;
   const tryNext = () => {
     if (i >= sources.length) return;
@@ -113,7 +114,8 @@ function setupVideo(video, onReady) {
 
 /* ---------- Canvas cesta ---------- */
 
-function createRoad(canvas) {
+/** Crta prizor ceste na canvas; koristi se i za statičnu prvu sliku (public/img/hero-poster-*.webp). */
+export function createRoad(canvas) {
   const ctx = canvas.getContext('2d');
   let W = 0;
   let H = 0;

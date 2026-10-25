@@ -1,26 +1,14 @@
 import { initializeApp } from 'firebase/app';
+import { PROJECT_CONFIG } from './firebase-config.js';
 
 const env = import.meta.env;
 
 /* Emulator samo uz `npm run dev:emulator` (Vite mode "emulator"), nikad u produkcijskom buildu. */
 export const useEmulator = env.MODE === 'emulator' || env.VITE_USE_EMULATOR === 'true';
 
-/*
- * Firebase web konfiguracija projekta „autoskola-drobo“.
- * Ovo su javni identifikatori aplikacije (vide se u svakom pregledniku), nisu tajna:
- * podatke štite pravila u firestore.rules. Mogu se pregaziti varijablama VITE_FIREBASE_* (vidi .env.example).
- */
-const PROJECT_CONFIG = {
-  apiKey: 'AIzaSyDWj0rXIoWjMzgPNgnhNGutTRNEzyimK04',
-  authDomain: 'autoskola-drobo.firebaseapp.com',
-  projectId: 'autoskola-drobo',
-  storageBucket: 'autoskola-drobo.firebasestorage.app',
-  messagingSenderId: '1086160193833',
-  appId: '1:1086160193833:web:679851d191f8fdee4bcf38',
-};
-
+/* Konfiguracija je u firebase-config.js; varijable VITE_FIREBASE_* (vidi .env.example) je mogu pregaziti. */
 const config = useEmulator
-  ? { apiKey: 'demo-key', authDomain: 'demo-drobo.firebaseapp.com', projectId: 'demo-drobo' }
+  ?{ apiKey: 'demo-key', authDomain: 'demo-drobo.firebaseapp.com', projectId: 'demo-drobo' }
   : {
       apiKey: env.VITE_FIREBASE_API_KEY || PROJECT_CONFIG.apiKey,
       authDomain: env.VITE_FIREBASE_AUTH_DOMAIN || PROJECT_CONFIG.authDomain,

@@ -6,8 +6,8 @@ let logoCount = 0;
  * Vektorska verzija loga autoškole (ispravljeno „SIGURNOST“).
  * Boje dolaze iz CSS varijabli --logo-red, --logo-road i --logo-bg.
  */
-export function logoSVG({ title = 'Autoškola Edukacija – Drobo, Travnik', className = 'logo' } = {}) {
-  const n = ++logoCount;
+export function logoSVG({ title = 'Autoškola Edukacija – Drobo, Travnik', className = 'logo', id } = {}) {
+  const n = id || `l${++logoCount}`;
   const top = `logo-top-${n}`;
   const bottom = `logo-bottom-${n}`;
   return `
@@ -113,7 +113,7 @@ export function telHref(phone) {
   return `tel:${digits.startsWith('0') ? `+387${digits.slice(1)}` : digits}`;
 }
 
-const NAV = [
+export const NAV = [
   { href: '/#usluge', label: 'Usluge' },
   { href: '/#casovi', label: 'Časovi' },
   { href: '/ispiti', label: 'Ispitni rokovi', page: 'ispiti' },
@@ -122,13 +122,13 @@ const NAV = [
   { href: '/#kontakt', label: 'Kontakt' },
 ];
 
-export function renderHeader(current = 'home') {
-  const header = document.createElement('header');
-  header.className = 'site-header';
-  header.innerHTML = `
+/* Zaglavlje i podnožje: isti HTML se upisuje u stranicu pri buildu (scripts/prerender-plugin.mjs),
+   a u pregledniku se samo dodaje ponašanje. */
+export function headerHTML(current = 'home') {
+  return `
     <div class="container header-inner">
       <a class="brand" href="/" aria-label="Autoškola Edukacija – Drobo, početna">
-        <span class="brand-badge">${logoSVG({ className: 'logo logo-badge' })}</span>
+        <span class="brand-badge">${logoSVG({ className: 'logo logo-badge', id: 'hdr' })}</span>
         <span class="brand-text"><strong>Edukacija – Drobo</strong><small>Autoškola · Travnik</small></span>
       </a>
       <nav class="main-nav" id="main-nav" aria-label="Glavni meni">
@@ -140,7 +140,16 @@ export function renderHeader(current = 'home') {
       <a class="btn btn-primary btn-sm header-cta${current === 'testovi' ? ' is-current' : ''}" href="/testovi">${icon('laptop', { size: 18 })}<span>Online testovi</span></a>
       <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Otvori meni">${icon('menu', { size: 24 })}</button>
     </div>`;
-  document.body.prepend(header);
+}
+
+export function renderHeader(current = 'home') {
+  let header = document.querySelector('.site-header');
+  if (!header) {
+    header = document.createElement('header');
+    header.className = 'site-header';
+    header.innerHTML = headerHTML(current);
+    document.body.prepend(header);
+  }
 
   const toggle = header.querySelector('.nav-toggle');
   const nav = header.querySelector('.main-nav');
@@ -191,17 +200,15 @@ export function renderHeader(current = 'home') {
   return header;
 }
 
-export function renderFooter(settings) {
-  const footer = document.createElement('footer');
-  footer.className = 'site-footer';
-  footer.innerHTML = `
+export function footerHTML(settings) {
+  return `
     <div class="container footer-grid">
       <div class="footer-brand">
-        <span class="footer-logo">${logoSVG()}</span>
+        <span class="footer-logo">${logoSVG({ id: 'ftr' })}</span>
         <p class="footer-slogan">${esc(settings.slogan)}</p>
       </div>
       <div>
-        <h3 class="footer-title">Kontakt</h3>
+        <h2 class="footer-title">Kontakt</h2>
         <ul class="footer-list">
           <li>${icon('pin', { size: 18 })}<span>${esc(settings.address)}</span></li>
           <li>${icon('phone', { size: 18 })}<a href="${telHref(settings.phone)}">${esc(settings.phone)}</a></li>
@@ -210,7 +217,7 @@ export function renderFooter(settings) {
         </ul>
       </div>
       <div>
-        <h3 class="footer-title">Stranice</h3>
+        <h2 class="footer-title">Stranice</h2>
         <ul class="footer-list footer-links">
           <li><a href="/testovi">Online učenje testova</a></li>
           <li><a href="/ispiti">Ispitni rokovi</a></li>
@@ -219,7 +226,7 @@ export function renderFooter(settings) {
         </ul>
       </div>
       <div>
-        <h3 class="footer-title">Pratite nas</h3>
+        <h2 class="footer-title">Pratite nas</h2>
         <a class="btn btn-ghost btn-sm" href="${esc(settings.facebook)}" target="_blank" rel="noopener">${icon('facebook', { size: 18 })} Facebook</a>
       </div>
     </div>
@@ -230,11 +237,21 @@ export function renderFooter(settings) {
       </div>
       <a class="footer-credit" href="https://avstudio.site" target="_blank" rel="noopener">
         <span>Izrada stranice</span>
-        <img src="/img/avstudio-logo.webp" alt="" width="34" height="28" loading="lazy" />
+        <img src="/img/avstudio-logo.webp" alt="A&amp;V Web Studio logo" width="34" height="28" loading="lazy" />
         <strong>A&amp;V Web Studio</strong>
       </a>
     </div>`;
-  document.body.append(footer);
+}
+
+/** Osvježi podnožje podacima iz baze (statička verzija je već u HTML-u). */
+export function renderFooter(settings) {
+  let footer = document.querySelector('.site-footer');
+  if (!footer) {
+    footer = document.createElement('footer');
+    footer.className = 'site-footer';
+    document.body.append(footer);
+  }
+  footer.innerHTML = footerHTML(settings);
   return footer;
 }
 

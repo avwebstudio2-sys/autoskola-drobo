@@ -1,7 +1,6 @@
 /* Zadani sadržaj: prikazuje se dok admin ne unese svoj (ili ako baza nije dostupna). */
 
 export const DEFAULT_SETTINGS = {
-  name: 'Autoškola „Edukacija – Drobo“',
   slogan: 'Edukacija – Kandidat – Sigurnost',
   heroText: 'Teorijska i praktična nastava za sve kategorije u Travniku, uz besplatno online učenje testova.',
   address: 'Konatur bb, 72270 Travnik',
@@ -12,7 +11,6 @@ export const DEFAULT_SETTINGS = {
   hours: 'Po dogovoru, nazovite nas za termin',
   mapQuery: 'Autoškola Edukacija Drobo, Konatur, Travnik',
   announcement: '',
-  reviews: '100% preporuka · 9 recenzija na Facebooku',
   requiredDocs: [
     'Ljekarsko uvjerenje o zdravstvenoj sposobnosti za upravljanje motornim vozilom',
     'Kopija lične karte',
@@ -76,4 +74,14 @@ export function todayISO() {
   const d = new Date();
   const pad = (n) => String(n).padStart(2, '0');
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+const sorters = {
+  examDates: (a, b) => `${a.date} ${a.time || ''}`.localeCompare(`${b.date} ${b.time || ''}`),
+  default: (a, b) => (Number(a.order) || 0) - (Number(b.order) || 0),
+};
+
+/** Sortira listu iz baze kao na stranici (ispitni rokovi po datumu, ostalo po rednom broju). */
+export function sortList(name, items) {
+  return [...items].sort(sorters[name] || sorters.default);
 }

@@ -9,3 +9,5 @@ dist
 *-debug.log
 __pycache__
 *.zip
+
+.env

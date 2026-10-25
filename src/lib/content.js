@@ -2,14 +2,9 @@ import {
   collection, doc, getDoc, getDocs, addDoc, serverTimestamp,
 } from 'firebase/firestore/lite';
 import { db } from './db.js';
-import { DEFAULT_SETTINGS, DEFAULTS } from './defaults.js';
+import { DEFAULT_SETTINGS, DEFAULTS, sortList } from './defaults.js';
 
 export { DEFAULT_SETTINGS, DEFAULTS, EXAM_TYPES, PROGRAMS, todayISO } from './defaults.js';
-
-const sorters = {
-  examDates: (a, b) => `${a.date} ${a.time || ''}`.localeCompare(`${b.date} ${b.time || ''}`),
-  default: (a, b) => (Number(a.order) || 0) - (Number(b.order) || 0),
-};
 
 export async function getSettings() {
   if (!db) return { ...DEFAULT_SETTINGS };
@@ -30,7 +25,7 @@ export async function getList(name) {
     const snap = await getDocs(collection(db, name));
     const items = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
     if (!items.length) return [...fallback];
-    return items.sort(sorters[name] || sorters.default);
+    return sortList(name, items);
   } catch (err) {
     console.warn(`Kolekcija ${name} nije učitana.`, err);
     return [...fallback];

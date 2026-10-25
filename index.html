@@ -1,38 +1,49 @@
 <!doctype html>
-<html lang="bs">
+<html lang="sr-Latn">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Autoškola „Edukacija – Drobo“ Travnik · Teorija, vožnja i online testovi</title>
-  <meta name="description" content="Autoškola Edukacija – Drobo iz Travnika: teorijska i praktična nastava za sve kategorije, besplatno online učenje testova, ispitni rokovi i online upis kandidata." />
+  <title>Autoškola Travnik | Edukacija – Drobo · Sve kategorije</title>
+  <meta name="description" content="Autoškola Edukacija – Drobo u Travniku: teorija i vožnja za sve kategorije, besplatni online testovi i ispitni rokovi. Prijavite se online ili nazovite." />
+  <meta name="robots" content="index, follow" />
   <meta name="theme-color" content="#16171b" />
-  <meta property="og:title" content="Autoškola „Edukacija – Drobo“ Travnik" />
-  <meta property="og:description" content="Edukacija – Kandidat – Sigurnost. Teorija, vožnja za sve kategorije i besplatni online testovi." />
-  <meta property="og:image" content="/img/logo-original.jpg" />
+  <script>document.documentElement.classList.add('js')</script>
+  <!--ssr:head-->
+  <link rel="preload" as="image" href="/img/hero-poster-1600.webp" type="image/webp" media="(min-width: 901px)" fetchpriority="high" />
+  <link rel="preload" as="image" href="/img/hero-poster-mobile.webp" type="image/webp" media="(max-width: 900px)" fetchpriority="high" />
   <link rel="icon" href="/img/favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap&subset=latin-ext" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/src/styles/main.css" />
   <link rel="stylesheet" href="/src/styles/home.css" />
 </head>
 <body>
   <a class="skip-link" href="#sadrzaj">Preskoči na sadržaj</a>
+  <!--ssr:header-->
 
   <!-- HERO: video/animacija ceste koja se pomjera skrolanjem -->
   <section class="hero" id="pocetak" aria-label="Uvod">
     <div class="hero-sticky">
-      <div class="hero-media" aria-hidden="true">
-        <canvas class="hero-canvas"></canvas>
-        <video class="hero-video" muted playsinline preload="auto" disablepictureinpicture></video>
+      <div class="hero-media">
+        <picture>
+          <source media="(max-width: 900px)" srcset="/img/hero-poster-mobile.webp" width="720" height="1280" />
+          <img class="hero-poster" src="/img/hero-poster-1600.webp" width="1600" height="900" fetchpriority="high" decoding="async"
+            alt="Ilustracija ceste s isprekidanom linijom u svitanje, motiv iz loga autoškole Edukacija – Drobo u Travniku" />
+        </picture>
+        <canvas class="hero-canvas" aria-hidden="true"></canvas>
+        <!-- Flow video: dodajte data-src="/video/hero.mp4" i data-src-mobile="/video/hero-mobile.mp4" kad video postoji -->
+        <video class="hero-video" muted playsinline preload="auto" disablepictureinpicture aria-hidden="true"></video>
       </div>
       <div class="hero-shade" aria-hidden="true"></div>
 
       <div class="container hero-content">
         <div class="hero-stage" data-stage="0">
           <a class="hero-announce" id="announcement" href="#upis" hidden></a>
-          <p class="eyebrow">Autoškola · Travnik</p>
-          <h1 class="hero-title display">Edukacija.<br />Kandidat.<br /><span class="text-red">Sigurnost.</span></h1>
+          <h1 class="hero-h1">
+            <span class="eyebrow">Autoškola · Travnik</span>
+            <span class="hero-title display">Edukacija.<br />Kandidat.<br /><span class="text-red">Sigurnost.</span></span>
+          </h1>
           <p class="hero-text" data-setting="heroText">Teorijska i praktična nastava za sve kategorije u Travniku, uz besplatno online učenje testova.</p>
           <div class="hero-actions">
             <a class="btn btn-primary btn-lg btn-pulse" href="/testovi">Vježbaj testove besplatno</a>
@@ -88,7 +99,7 @@
           <p class="eyebrow">Usluge</p>
           <h2 class="section-title" id="usluge-title">Sve što treba<br />za vozačku dozvolu.</h2>
         </div>
-        <div class="services-grid" id="services-list"></div>
+        <div class="services-grid" id="services-list"><!--ssr:services--></div>
       </div>
     </section>
 
@@ -102,7 +113,7 @@
           </div>
           <a class="btn btn-primary" href="#upis">Prijavi se za obuku</a>
         </div>
-        <ul class="category-grid" id="categories-list"></ul>
+        <ul class="category-grid" id="categories-list"><!--ssr:categories--></ul>
       </div>
     </section>
 
@@ -118,7 +129,7 @@
             <p class="lead">Teorijska nastava održava se po rasporedu ispod. Termine praktične nastave dogovarate direktno sa instruktorom.</p>
           </div>
         </div>
-        <div id="schedule-list"></div>
+        <div id="schedule-list"><!--ssr:schedule--></div>
       </div>
     </section>
 
@@ -132,7 +143,7 @@
           </div>
           <a class="link-arrow" href="/ispiti">Svi ispitni rokovi <span data-icon="arrow"></span></a>
         </div>
-        <ul class="exam-preview" id="exam-preview"></ul>
+        <div id="exam-preview"><!--ssr:examPreview--></div>
       </div>
     </section>
 
@@ -173,7 +184,7 @@
             </div>
             <div class="field">
               <label for="f-category">Kategorija</label>
-              <select class="select" id="f-category" name="category"></select>
+              <select class="select" id="f-category" name="category"><!--ssr:categoryOptions--></select>
             </div>
             <fieldset class="field fieldset-reset">
               <legend class="label">Šta želite polagati? <span class="req" aria-hidden="true">*</span></legend>
@@ -227,7 +238,7 @@
           <p class="lead">Ako ne nađeš odgovor, nazovi nas, rado ćemo pomoći.</p>
           <a class="btn btn-dark" data-phone-link href="#kontakt"><span data-icon="phone"></span> <span data-setting="phone">030 501-433</span></a>
         </div>
-        <div class="faq-list" id="faq-list"></div>
+        <div class="faq-list" id="faq-list"><!--ssr:faq--></div>
       </div>
     </section>
 
@@ -239,9 +250,9 @@
           <h2 class="section-title" id="kontakt-title">Navrati ili nazovi.</h2>
         </div>
         <div class="contact-grid">
-          <ul class="contact-cards" id="contact-cards"></ul>
+          <ul class="contact-cards" id="contact-cards"><!--ssr:contact--></ul>
           <div class="map-wrap" data-reveal="1">
-            <iframe id="map-frame" title="Lokacija autoškole na karti" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <iframe id="map-frame" src="%SSR_MAP_SRC%" title="Lokacija autoškole Edukacija – Drobo na karti, Konatur bb, Travnik" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
           </div>
           <form class="card card--dark contact-form form-grid" id="contact-form" novalidate data-reveal="2">
             <h3 class="form-title">Pošalji poruku</h3>
@@ -267,6 +278,7 @@
     </section>
   </main>
 
+  <!--ssr:footer-->
   <script type="module" src="/src/pages/home.js"></script>
 </body>
 </html>

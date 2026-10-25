@@ -164,7 +164,7 @@ function renderSetupNeeded() {
     <div class="auth-wrap"><div class="auth-card">
       <span class="auth-logo">${logoSVG()}</span>
       <h1>Firebase nije podešen</h1>
-      <p>Upišite podatke Firebase projekta u datoteku <code>.env</code> (vidi README.md) i ponovo objavite stranicu.</p>
+      <p>Provjerite Firebase konfiguraciju u <code>src/lib/firebase.js</code> (vidi README.md) i ponovo objavite stranicu.</p>
     </div></div>`;
 }
 

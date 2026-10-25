@@ -1,20 +1,24 @@
 <!doctype html>
-<html lang="bs">
+<html lang="sr-Latn">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Ispitni rokovi · Autoškola „Edukacija – Drobo“ Travnik</title>
-  <meta name="description" content="Termini teorijskih ispita, ispita iz prve pomoći i ispita iz vožnje za sve kategorije, Autoškola Edukacija – Drobo, Travnik." />
+  <title>Ispitni rokovi Travnik | Autoškola Edukacija – Drobo</title>
+  <meta name="description" content="Ispitni rokovi u Travniku: termini teorijskih ispita, prve pomoći i vožnje za sve kategorije. Pogledajte naredne datume i prijavite se kod nas na vrijeme." />
+  <meta name="robots" content="index, follow" />
   <meta name="theme-color" content="#16171b" />
+  <script>document.documentElement.classList.add('js')</script>
+  <!--ssr:head-->
   <link rel="icon" href="/img/favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap&subset=latin-ext" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/src/styles/main.css" />
   <link rel="stylesheet" href="/src/styles/ispiti.css" />
 </head>
 <body class="page-solid-header">
   <a class="skip-link" href="#sadrzaj">Preskoči na sadržaj</a>
+  <!--ssr:header-->
   <main id="sadrzaj">
     <section class="page-hero">
       <div class="container">
@@ -35,11 +39,11 @@
           </div>
           <div class="filter-side">
             <label class="sr-only" for="cat-filter">Kategorija</label>
-            <select class="select" id="cat-filter"><option value="">Sve kategorije</option></select>
+            <select class="select" id="cat-filter"><!--ssr:examCategoryOptions--></select>
             <label class="check past-toggle"><input type="checkbox" id="show-past" /> <span>Prikaži protekle</span></label>
           </div>
         </div>
-        <div id="exam-list" aria-live="polite"></div>
+        <div id="exam-list" aria-live="polite"><!--ssr:examList--></div>
         <div class="exam-cta">
           <div>
             <h2 class="exam-cta-title">Spremi se za ispit</h2>
@@ -50,6 +54,7 @@
       </div>
     </section>
   </main>
+  <!--ssr:footer-->
   <script type="module" src="/src/pages/ispiti.js"></script>
 </body>
 </html>
