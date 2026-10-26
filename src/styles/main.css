@@ -58,6 +58,8 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+  /* Bez plavog kvadrata pri dodiru na telefonu */
+  -webkit-tap-highlight-color: transparent;
   scroll-behavior: smooth;
   scroll-padding-top: calc(var(--header-h) + 12px);
 }
@@ -108,6 +110,10 @@ button, input, select, textarea { font: inherit; color: inherit; }
 h1, h2, h3, h4 { margin: 0; line-height: 1.05; }
 p { margin: 0; }
 ul { margin: 0; padding: 0; list-style: none; }
+
+/* Okvir fokusa samo pri radu tastaturom, ne na klik ili dodir */
+:focus:not(:focus-visible) { outline: none; }
+[tabindex='-1']:focus { outline: none; }
 
 :focus-visible {
   outline: 3px solid var(--red);
