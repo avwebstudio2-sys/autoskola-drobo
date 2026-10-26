@@ -680,8 +680,8 @@
 /* ---------- Telefon ---------- */
 
 @media (max-width: 600px) {
-  .hero-title { font-size: clamp(2.9rem, 14.5vw, 3.9rem); margin-top: 12px; }
-  .hero-text { margin-top: 14px; font-size: 1rem; }
+  .hero-title { font-size: clamp(3.2rem, 17vw, 4.7rem); margin-top: 12px; }
+  .hero-text { margin-top: 14px; font-size: 1.16rem; }
   .hero-actions { margin-top: 22px; gap: 8px; }
   .hero-actions .btn-lg { min-height: 44px; padding: 8px 18px; font-size: 0.98rem; }
   .hero-announce { margin-bottom: 14px; font-size: 0.9rem; padding: 6px 12px 6px 6px; }
