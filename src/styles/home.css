@@ -685,6 +685,10 @@
   /* Prva i treća poruka malo manje; srednja („Sve kategorije“) ostaje kao gore */
   .hero-stage[data-stage='0'] .hero-title, .hero-stage[data-stage='2'] .hero-title { font-size: clamp(3.2rem, 17.5vw, 4.8rem); }
   .hero-stage[data-stage='0'] .hero-text, .hero-stage[data-stage='2'] .hero-text { font-size: 1.16rem; }
+  /* Treća poruka je duža (tri reda + dugme): manja, da ne dolazi do auta */
+  .hero-stage[data-stage='2'] .hero-title { font-size: clamp(2.7rem, 14.5vw, 4rem); }
+  .hero-stage[data-stage='2'] .hero-text { font-size: 1.06rem; margin-top: 10px; }
+  .hero-stage[data-stage='2'] .hero-actions { margin-top: 16px; }
   .hero-actions { margin-top: 22px; gap: 8px; }
   .hero-actions .btn-lg { min-height: 44px; padding: 8px 18px; font-size: 0.98rem; }
   .hero-announce { margin-bottom: 14px; font-size: 0.9rem; padding: 6px 12px 6px 6px; }
