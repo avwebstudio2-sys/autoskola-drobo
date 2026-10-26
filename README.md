@@ -30,7 +30,7 @@ Probni admin nalog postoji samo u emulatoru i zapisan je u `scripts/seed-emulato
 
 ## Gdje šta živi
 
-- **Stranica (HTML, CSS, JS, pitanja, slike)**: Netlify. Statični fajlovi iz `dist/` (`npm run build`).
+- **Stranica (HTML, CSS, JS, pitanja, slike)**: Netlify ili Vercel. Statični fajlovi iz `dist/` (`npm run build`).
 - **Baza i prijava za admina**: Firebase projekat `autoskola-drobo` (Firestore + Authentication). Netlify je ne dira, a podaci ostaju isti bez obzira gdje je stranica hostovana.
 - **Firebase konfiguracija**: upisana u `src/lib/firebase.js`. Vrijednosti su javni identifikatori aplikacije, a zaštitu podataka rade pravila u `firestore.rules`. `.env` nije potreban (opcionalno pregazi konfiguraciju, vidi `.env.example`).
 
@@ -58,8 +58,13 @@ Probni admin nalog postoji samo u emulatoru i zapisan je u `scripts/seed-emulato
 2. Postavke builda se same popune iz `netlify.toml` → *Deploy*.
 3. *Site configuration → Change site name* (npr. `autoskola-drobo` → `autoskola-drobo.netlify.app`), a po želji *Domain management* za vlastitu domenu.
 
+**2b. Vercel (umjesto Netlifyja)**
+1. [vercel.com/new](https://vercel.com/new) → *Import Git Repository* → odaberite repozitorij → *Deploy*. Postavke builda su u `vercel.json` (`npm run build`, folder `dist`), a varijable nisu potrebne.
+2. `vercel.json` služi `/testovi`, `/ispiti` i `/admin` iz istoimenih `.html` fajlova (`cleanUrls`), postavlja keširanje slika i kadrova, te `noindex` za admin, isto kao `netlify.toml`.
+3. Adresa za canonical, `og:url` i `sitemap.xml` se uzima iz Vercelove glavne domene (`VERCEL_PROJECT_PRODUCTION_URL`). Nakon dodavanja vlastite domene pokrenite *Redeploy*.
+
 **3. Firebase: dozvoli novu domenu**
-Firebase konzola → **Authentication → Settings → Authorized domains → Add domain**: vlastita domena ako je imate (`autoskola-drobo.netlify.app` je već dodana).
+Firebase konzola → **Authentication → Settings → Authorized domains → Add domain**: Vercel domena (npr. `autoskola-drobo.vercel.app`) i vlastita domena ako je imate (`autoskola-drobo.netlify.app` je već dodana).
 
 Svaki `git push` na `main` automatski objavljuje novu verziju. Baza se pritom ne mijenja.
 
@@ -117,7 +122,7 @@ Zatim u `index.html` na `<canvas class="hero-canvas">` upišite broj kadrova (`d
 - **Sadržaj je u HTML-u.** Pri svakom buildu `scripts/prerender-plugin.mjs` povuče sadržaj iz Firestore-a i upiše ga direktno u HTML: zaglavlje, usluge, kategorije, raspored, ispitne rokove, FAQ, kontakt i pregled testova. Pretraživači i AI alati tako vide sav tekst i bez JavaScripta. U pregledniku se sadržaj odmah osvježi iz baze.
 - **Izmjene iz admina** posjetioci vide odmah, a u HTML (za Google) ulaze pri sljedećem buildu. Nakon većih izmjena (FAQ, usluge, kontakt, novi ispitni rokovi) na Netlifyju kliknite *Deploys → Trigger deploy → Deploy site*.
 - **Meta oznake** (canonical, Open Graph, Twitter) i **JSON-LD** (`LocalBusiness`, `FAQPage`) pravi isti plugin. Title i description su upisani u svaki HTML fajl.
-- **Adresa sajta** za canonical, `og:url`, `robots.txt` i `sitemap.xml`: Netlify je sam postavlja (varijabla `URL`, uvijek glavna domena). Lokalno se koristi `https://autoskola-drobo.netlify.app`, a može se pregaziti varijablom `SITE_URL`.
+- **Adresa sajta** za canonical, `og:url`, `robots.txt` i `sitemap.xml`: Netlify je sam postavlja (varijabla `URL`, uvijek glavna domena), a na Vercelu `VERCEL_PROJECT_PRODUCTION_URL`. Lokalno se koristi `https://autoskola-drobo.netlify.app`, a može se pregaziti varijablom `SITE_URL`.
 - **`robots.txt` i `sitemap.xml`** nastaju pri buildu u `dist/`, pored `index.html`.
 - **Slike**: `public/img/hero-poster.webp` (prvi kadar videa) i `hero-poster-mobile.webp` (ista kompozicija kao animacija na telefonu) su glavna slika i učitavaju se odmah. `og-image.jpg` (1200×630) je slika za dijeljenje na društvenim mrežama: kadar s autom i slogan.
 

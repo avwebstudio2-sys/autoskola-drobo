@@ -160,7 +160,9 @@ function sitemapXml(siteUrl) {
 /* ---------- Plugin ---------- */
 
 export default function prerender() {
-  const siteUrl = (process.env.SITE_URL || process.env.URL || DEFAULT_SITE_URL).replace(/\/$/, '');
+  // Glavna adresa sajta: SITE_URL ručno, URL na Netlifyju, VERCEL_PROJECT_PRODUCTION_URL (bez https://) na Vercelu
+  const vercelUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL && `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  const siteUrl = (process.env.SITE_URL || process.env.URL || vercelUrl || DEFAULT_SITE_URL).replace(/\/$/, '');
   let root = process.cwd();
   let mode = 'production';
   let contentPromise;
