@@ -149,30 +149,32 @@ export function createRoad(canvas) {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     const wide = W > 900;
     const vpx = W * (wide ? 0.62 : 0.5);
-    const horizon = H * (wide ? 0.46 : 0.42);
+    // Uspravan ekran telefona: niži horizont, da tekst pri vrhu stoji preko neba, a cesta ostane ispod njega
+    const portrait = !wide && H > W * 1.3;
+    const horizon = H * (wide ? 0.46 : portrait ? 0.56 : 0.42);
     const dawn = smooth(clamp(p * 1.15));
 
-    // Nebo: od noći prema crvenom svitanju
+    // Nebo: tamnoplavi sumrak prema jarkom crveno-narandžastom svitanju
     const sky = ctx.createLinearGradient(0, 0, 0, horizon);
-    sky.addColorStop(0, `rgb(${lerp(10, 26, dawn)}, ${lerp(11, 12, dawn)}, ${lerp(14, 16, dawn)})`);
-    sky.addColorStop(0.6, `rgb(${lerp(24, 92, dawn)}, ${lerp(12, 16, dawn)}, ${lerp(16, 20, dawn)})`);
-    sky.addColorStop(1, `rgb(${lerp(110, 228, dawn)}, ${lerp(14, 70, dawn)}, ${lerp(20, 36, dawn)})`);
+    sky.addColorStop(0, `rgb(${lerp(34, 44, dawn)}, ${lerp(40, 46, dawn)}, ${lerp(78, 88, dawn)})`);
+    sky.addColorStop(0.55, `rgb(${lerp(108, 170, dawn)}, ${lerp(40, 52, dawn)}, ${lerp(84, 84, dawn)})`);
+    sky.addColorStop(1, `rgb(${lerp(218, 250, dawn)}, ${lerp(66, 120, dawn)}, ${lerp(48, 60, dawn)})`);
     ctx.fillStyle = sky;
     ctx.fillRect(0, 0, W, horizon + 1);
 
     // Sunce koje izlazi u tački nestajanja
     const sunY = horizon + lerp(H * 0.05, -H * 0.06, dawn);
     const glow = ctx.createRadialGradient(vpx, sunY, 0, vpx, sunY, Math.max(W, H) * 0.55);
-    glow.addColorStop(0, `rgba(255, ${lerp(90, 170, dawn)}, ${lerp(60, 90, dawn)}, ${lerp(0.35, 0.9, dawn)})`);
-    glow.addColorStop(0.18, `rgba(215, 20, 26, ${lerp(0.25, 0.45, dawn)})`);
+    glow.addColorStop(0, `rgba(255, ${lerp(130, 186, dawn)}, ${lerp(70, 96, dawn)}, ${lerp(0.55, 0.95, dawn)})`);
+    glow.addColorStop(0.18, `rgba(225, 40, 36, ${lerp(0.32, 0.48, dawn)})`);
     glow.addColorStop(1, 'rgba(215, 20, 26, 0)');
     ctx.fillStyle = glow;
     ctx.fillRect(0, 0, W, horizon + 1);
 
     // Planine (dva sloja)
     const layers = [
-      { pts: ridges[0], base: horizon, height: H * 0.11, color: `rgb(${lerp(34, 70, dawn)}, ${lerp(18, 22, dawn)}, ${lerp(22, 26, dawn)})`, shift: p * 0.02 },
-      { pts: ridges[1], base: horizon + 2, height: H * 0.07, color: `rgb(${lerp(18, 30, dawn)}, ${lerp(18, 20, dawn)}, ${lerp(21, 24, dawn)})`, shift: p * 0.05 },
+      { pts: ridges[0], base: horizon, height: H * 0.11, color: `rgb(${lerp(80, 118, dawn)}, ${lerp(40, 46, dawn)}, ${lerp(74, 70, dawn)})`, shift: p * 0.02 },
+      { pts: ridges[1], base: horizon + 2, height: H * 0.07, color: `rgb(${lerp(50, 62, dawn)}, ${lerp(36, 38, dawn)}, ${lerp(60, 58, dawn)})`, shift: p * 0.05 },
     ];
     layers.forEach((L) => {
       ctx.beginPath();
@@ -189,8 +191,8 @@ export function createRoad(canvas) {
 
     // Tlo
     const ground = ctx.createLinearGradient(0, horizon, 0, H);
-    ground.addColorStop(0, '#16120f');
-    ground.addColorStop(1, '#0c0d0f');
+    ground.addColorStop(0, '#35272f');
+    ground.addColorStop(1, '#1e1f25');
     ctx.fillStyle = ground;
     ctx.fillRect(0, horizon, W, H - horizon);
 
@@ -203,9 +205,9 @@ export function createRoad(canvas) {
 
     // Asfalt
     const asphalt = ctx.createLinearGradient(0, horizon, 0, H);
-    asphalt.addColorStop(0, `rgb(${lerp(50, 92, dawn)}, ${lerp(36, 46, dawn)}, ${lerp(38, 44, dawn)})`);
-    asphalt.addColorStop(0.25, '#26272c');
-    asphalt.addColorStop(1, '#1b1c20');
+    asphalt.addColorStop(0, `rgb(${lerp(112, 150, dawn)}, ${lerp(66, 76, dawn)}, ${lerp(80, 80, dawn)})`);
+    asphalt.addColorStop(0.25, '#3c3d46');
+    asphalt.addColorStop(1, '#2c2d34');
     ctx.beginPath();
     ctx.moveTo(xAt(far, -1), yAt(far));
     ctx.lineTo(xAt(far, 1), yAt(far));
@@ -271,7 +273,7 @@ export function createRoad(canvas) {
     // Blaga izmaglica na horizontu
     const haze = ctx.createLinearGradient(0, horizon - H * 0.06, 0, horizon + H * 0.08);
     haze.addColorStop(0, 'rgba(215, 20, 26, 0)');
-    haze.addColorStop(0.5, `rgba(230, 90, 70, ${lerp(0.08, 0.22, dawn)})`);
+    haze.addColorStop(0.5, `rgba(240, 100, 70, ${lerp(0.14, 0.26, dawn)})`);
     haze.addColorStop(1, 'rgba(215, 20, 26, 0)');
     ctx.fillStyle = haze;
     ctx.fillRect(0, horizon - H * 0.06, W, H * 0.14);

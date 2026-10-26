@@ -232,13 +232,14 @@ export function footerHTML(settings) {
     </div>
     <div class="container footer-bottom">
       <div class="footer-legal">
-        <span>© ${new Date().getFullYear()} Edukacija – Drobo d.o.o. Travnik. Sva prava zadržana.</span>
+        <span>© ${new Date().getFullYear()} Edukacija – Drobo d.o.o. Travnik</span>
+        <span class="footer-sep" aria-hidden="true"></span>
+        <span>Sva prava zadržana.</span>
         <a href="/admin" class="footer-admin">Administracija</a>
       </div>
       <a class="footer-credit" href="https://avstudio.site" target="_blank" rel="noopener">
-        <span>Izrada stranice</span>
-        <img src="/img/avstudio-logo.webp" alt="A&amp;V Web Studio logo" width="34" height="28" loading="lazy" />
-        <strong>A&amp;V Web Studio</strong>
+        <span>Stranicu izradio <strong>A&amp;V Web Studio</strong></span>
+        <img src="/img/avstudio-logo.webp" alt="A&amp;V Web Studio logo" width="26" height="22" loading="lazy" />
       </a>
     </div>`;
 }

@@ -165,10 +165,11 @@
 }
 
 @media (max-width: 720px) {
+  /* Tekst je pri vrhu preko neba, pa je zatamnjenje gore, a cesta ispod ostaje vidljiva */
   .hero-shade {
-    background: linear-gradient(0deg, rgba(15, 16, 19, 0.92) 10%, rgba(15, 16, 19, 0.35) 60%, rgba(15, 16, 19, 0.55) 100%);
+    background: linear-gradient(180deg, rgba(15, 16, 19, 0.82) 0%, rgba(15, 16, 19, 0.6) 45%, rgba(15, 16, 19, 0.15) 75%, rgba(15, 16, 19, 0.35) 100%);
   }
-  .hero-content { align-items: end; padding-bottom: 96px; }
+  .hero-content { align-items: start; padding-top: clamp(16px, 4svh, 36px); }
   .hero-progress, .hero-scroll { display: none; }
   .hero-actions .btn { flex: 1 1 100%; }
 }
@@ -433,7 +434,7 @@
   gap: clamp(32px, 6vw, 80px);
   align-items: start;
 }
-.steps { display: grid; gap: 20px; margin-top: 36px; }
+.steps { display: grid; gap: 20px; margin: 36px 0 0; padding: 0; list-style: none; }
 .steps li { display: flex; gap: 16px; align-items: flex-start; }
 .step-n {
   flex: none;
@@ -613,7 +614,6 @@
   .hero-title { font-size: clamp(2.5rem, 12.5vw, 3.3rem); margin-top: 12px; }
   .hero-text { margin-top: 14px; font-size: 1rem; }
   .hero-actions { margin-top: 22px; gap: 10px; }
-  .hero-content { padding-bottom: 72px; }
   .hero-announce { margin-bottom: 14px; font-size: 0.9rem; padding: 6px 12px 6px 6px; }
   .hero-announce .dot { width: 24px; height: 24px; }
 
