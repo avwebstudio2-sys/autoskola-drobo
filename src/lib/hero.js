@@ -25,7 +25,7 @@ export function initHero(hero) {
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const stages = [...hero.querySelectorAll('.hero-stage')];
   const bar = hero.querySelector('.hero-progress-bar');
-  const cue = hero.querySelector('.hero-scroll');
+  const cues = hero.querySelectorAll('.hero-scroll, .hero-scroll-m');
   const player = createFramePlayer(hero.querySelector('.hero-canvas'), { preloadAll: !reduced });
 
   let target = 0;
@@ -52,7 +52,7 @@ export function initHero(hero) {
     hero.style.setProperty('--side', side.toFixed(3));
     hero.classList.toggle('is-right', side > 0.5);
     if (bar) bar.style.setProperty('--p', p.toFixed(4));
-    if (cue) cue.style.opacity = String(1 - clamp(p * 6));
+    cues.forEach((cue) => { cue.style.opacity = String(1 - clamp(p * 6)); });
   };
 
   window.addEventListener('resize', () => { player.resize(); readProgress(); });

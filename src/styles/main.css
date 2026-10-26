@@ -659,8 +659,8 @@ ul { margin: 0; padding: 0; list-style: none; }
   margin-top: 18px;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.3rem;
-  letter-spacing: 0.08em;
+  font-size: clamp(0.78rem, 1.05vw, 0.98rem);
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   white-space: nowrap;
   color: var(--paper);
@@ -705,7 +705,7 @@ ul { margin: 0; padding: 0; list-style: none; }
   transition: color 0.2s ease;
 }
 .footer-credit img {
-  width: 26px;
+  width: 18px;
   height: auto;
   /* Logo je taman: brightness(0) + invert(1) daje čisto bijel znak */
   filter: brightness(0) invert(1);
@@ -754,7 +754,7 @@ ul { margin: 0; padding: 0; list-style: none; }
   .site-footer { padding-top: 44px; }
   .footer-grid { gap: 28px; }
   .footer-logo { width: 104px; }
-  .footer-slogan { font-size: clamp(0.85rem, 4.2vw, 1.1rem); letter-spacing: 0.05em; }
+  .footer-slogan { font-size: clamp(0.72rem, 3.6vw, 0.95rem); letter-spacing: 0.04em; }
   /* Pravni tekst i potpis na telefonu u sredini; bez uspravne crte kad su u dva reda */
   .footer-bottom { margin-top: 36px; flex-direction: column; align-items: center; text-align: center; gap: 4px; }
   .footer-legal { flex-direction: column; justify-content: center; gap: 2px; }
