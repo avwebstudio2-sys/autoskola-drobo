@@ -240,9 +240,11 @@
 .switch input:focus-visible + .switch-ui { outline: 3px solid var(--red); outline-offset: 2px; }
 
 .q-nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+  display: grid;
+  /* --cols postavlja testovi.js; kolone su raspoređene preko cijele širine */
+  grid-template-columns: repeat(var(--cols, 10), 40px);
+  justify-content: space-between;
+  gap: 10px 6px;
   margin-bottom: 18px;
 }
 .q-dot {
@@ -528,7 +530,7 @@ kbd {
 
   .runner { padding-top: calc(var(--header-h) + 14px); padding-bottom: 44px; }
   .runner-title { font-size: 1.3rem; }
-  .q-nav { gap: 5px; margin-bottom: 14px; }
+  .q-nav { grid-template-columns: repeat(var(--cols, 8), 36px); gap: 8px 5px; margin-bottom: 14px; }
   .q-dot { width: 36px; height: 36px; border-radius: 9px; font-size: 0.9rem; }
   .q-card { padding: 16px; gap: 18px; }
   .q-text { margin: 12px 0 16px; font-size: 1.08rem; }

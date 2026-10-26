@@ -33,8 +33,6 @@ try {
 }
 renderFooter(settings);
 setupLightbox();
-window.addEventListener('hashchange', route);
-route();
 
 /* ---------- Pomoćne ---------- */
 
@@ -206,6 +204,16 @@ function createRunner(cfg) {
   const count = app.querySelector('.runner-count');
 
   nav.innerHTML = questions.map((q, i) => `<button type="button" class="q-dot" data-i="${i}" aria-label="Pitanje ${i + 1}">${i + 1}</button>`).join('');
+
+  // Brojevi pitanja zauzimaju punu širinu: redovi su ravnomjerno popunjeni, a razmak raste
+  const layoutDots = () => {
+    const dot = nav.firstElementChild?.offsetWidth || 40;
+    const perRow = Math.max(1, Math.floor((nav.clientWidth + 6) / (dot + 6)));
+    const rows = Math.ceil(questions.length / perRow);
+    nav.style.setProperty('--cols', Math.ceil(questions.length / rows));
+  };
+  const dotsObserver = new ResizeObserver(layoutDots);
+  dotsObserver.observe(nav);
   nav.addEventListener('click', (e) => {
     const b = e.target.closest('.q-dot');
     if (b) go(Number(b.dataset.i));
@@ -364,6 +372,7 @@ function createRunner(cfg) {
 
   function finish() {
     state.finished = true;
+    dotsObserver.disconnect();
     clearInterval(timer);
     const results = questions.map((q, i) => ({ q, sel: state.selected[i], ok: isCorrect(q, state.selected[i]) }));
     const correct = results.filter((r) => r.ok).length;
@@ -430,6 +439,7 @@ function createRunner(cfg) {
   render();
   return {
     destroy() {
+      dotsObserver.disconnect();
       clearInterval(timer);
       document.removeEventListener('keydown', onKey);
     },
@@ -455,3 +465,8 @@ function openLightbox(src, alt) {
   img.alt = alt;
   dlg.showModal();
 }
+
+/* Pokretanje na kraju modula: pomoćne konstante iznad (questionsFor, isCorrect…) moraju biti
+   inicijalizovane prije prve rute, inače direktan link na #/test/… ili #/lekcije/… ne radi */
+window.addEventListener('hashchange', route);
+route();
