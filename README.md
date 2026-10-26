@@ -105,6 +105,7 @@ Hero prikazuje video vožnje (auto autoškole) koji se premotava skrolom. Video 
 - `public/hero-frames/d/` – svih 240 kadrova, 1280 px (desktop, oko 5,1 MB)
 - `public/hero-frames/m/` – 120 kadrova, 960 px (telefon, oko 1,6 MB)
 - Kadrovi se učitavaju postepeno (prvo svaki 32., pa sve gušće) nakon što se stranica učita.
+- Animacija počinje od 25 % videa (`data-start="0.25"` na `<canvas class="hero-canvas">`), kad je auto već bliže; raniji kadrovi se ne učitavaju. Početne slike (`public/img/hero-poster.webp` i `hero-poster-mobile.webp`) su kadar s tog mjesta. Ako mijenjate početak, uskladite i vremena u `src/lib/hero.js` (`STAGES`, `SIDE_SWITCH`).
 - Na desktopu tekst prelazi desno kad auto skrene lijevo (`data-side="right"` na `.hero-stage`), a kadar se blago pomjeri da auto ostane lijevo.
 - Na uspravnom ekranu (telefon) video je traka na dnu, a iznad nje nebo u boji vrha kadra, iza teksta.
 
