@@ -294,20 +294,24 @@
 .service-card.is-featured p { color: var(--muted-on-dark); }
 .service-card .link-arrow { margin-top: auto; }
 
-/* ---------- Kategorije ---------- */
+/* ---------- Kategorije ----------
+   Desktop: sve kategorije u jednom redu (bez obzira koliko ih admin unese).
+   Tablet i telefon: pregledan spisak, oznaka lijevo, naziv i opis desno. */
 
 .category-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 14px;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 12px;
 }
+.category-grid > li { min-width: 0; }
 .category-tile {
   position: relative;
   display: flex;
   flex-direction: column;
   gap: 6px;
   height: 100%;
-  padding: 24px;
+  padding: 20px 16px;
   border-radius: var(--radius-lg);
   background: var(--asphalt-850);
   border: 1px solid var(--line-dark);
@@ -318,12 +322,36 @@
 .category-code {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 2.6rem;
+  font-size: clamp(1.5rem, 2.1vw, 2rem);
   line-height: 1;
+  white-space: nowrap;
   color: var(--red);
 }
-.category-tile h3 { font-size: 1.15rem; font-weight: 700; line-height: 1.25; }
-.category-tile p { font-size: 0.95rem; color: var(--muted-on-dark); }
+.category-tile h3 { font-size: 1.02rem; font-weight: 700; line-height: 1.25; }
+.category-tile p { font-size: 0.88rem; line-height: 1.5; color: var(--muted-on-dark); }
+
+@media (max-width: 1099px) {
+  .category-grid {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .category-tile {
+    display: grid;
+    grid-template-columns: 6rem minmax(0, 1fr);
+    grid-template-areas: 'code name' 'code text';
+    column-gap: 14px;
+    row-gap: 2px;
+    padding: 14px 16px;
+  }
+  .category-tile:hover { transform: none; }
+  .category-code { grid-area: code; align-self: center; font-size: 1.5rem; }
+  .category-tile h3 { grid-area: name; align-self: end; }
+  .category-tile p { grid-area: text; align-self: start; }
+}
+@media (max-width: 599px) {
+  .category-grid { grid-template-columns: 1fr; }
+}
 
 /* ---------- Raspored časova ---------- */
 
@@ -599,12 +627,6 @@
   .service-icon { width: 48px; height: 48px; border-radius: 13px; }
   .service-card h3 { font-size: 1.6rem; }
 
-  .category-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
-  .category-tile { padding: 16px; }
-  .category-code { font-size: 1.9rem; }
-  .category-tile h3 { font-size: 1rem; }
-  .category-tile p { font-size: 0.88rem; }
-
   .schedule-row { padding: 14px 16px; }
   .schedule-day { font-size: 1.2rem; }
 
@@ -627,7 +649,4 @@
   .contact-cards li { padding: 14px; gap: 12px; }
   .contact-cards .ic { width: 38px; height: 38px; border-radius: 10px; }
   .map-wrap, .map-wrap iframe { min-height: 260px; }
-}
-@media (max-width: 360px) {
-  .category-grid { grid-template-columns: 1fr; }
 }
