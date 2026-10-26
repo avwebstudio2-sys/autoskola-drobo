@@ -11,14 +11,16 @@ const clamp = (v, min = 0, max = 1) => Math.min(max, Math.max(min, v));
 const lerp = (a, b, t) => a + (b - a) * t;
 const smooth = (t) => t * t * (3 - 2 * t);
 
+/* Animacija počinje od 25 % videa (data-start na canvasu), kad je auto već bliže;
+   zato auto ranije skreće ulijevo, pa su i promjene teksta pomjerene ranije */
 const STAGES = [
-  [0, 0.27],
-  [0.35, 0.6],
+  [0, 0.22],
+  [0.3, 0.6],
   [0.68, 1.01],
 ];
 const FADE = 0.07;
-/* Auto u videu od oko 3. sekunde prilazi i skreće ulijevo: tekst i zatamnjenje prelaze desno u ovom rasponu skrola */
-const SIDE_SWITCH = [0.25, 0.34];
+/* Kad auto skrene ulijevo, tekst i zatamnjenje prelaze desno u ovom rasponu skrola */
+const SIDE_SWITCH = [0.2, 0.29];
 
 export function initHero(hero) {
   if (!hero) return;
@@ -101,6 +103,9 @@ export function createFramePlayer(canvas, { preloadAll = true } = {}) {
   const count = Number(small ? canvas.dataset.framesMobile : canvas.dataset.frames);
   const base = small ? canvas.dataset.pathMobile : canvas.dataset.path;
   const firstSrc = small ? null : canvas.dataset.poster;
+  // Animacija počinje od ovog dijela videa (0–1), kad je auto već bliže; raniji kadrovi se ne učitavaju
+  const startAt = clamp(Number(canvas.dataset.start) || 0);
+  const first = Math.round(startAt * (count - 1));
   const frames = new Array(count).fill(null);
   const topColors = new Array(count).fill(null);
   const sampler = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
@@ -122,13 +127,13 @@ export function createFramePlayer(canvas, { preloadAll = true } = {}) {
     lastKey = '';
   }
 
-  const src = (i) => (i === 0 && firstSrc) || `${base}${String(i + 1).padStart(3, '0')}.webp`;
+  const src = (i) => (i === first && firstSrc) || `${base}${String(i + 1).padStart(3, '0')}.webp`;
 
   function load(i) {
     return new Promise((resolve) => {
       const img = new Image();
       img.decoding = 'async';
-      img.fetchPriority = i === 0 ? 'high' : 'low';
+      img.fetchPriority = i === first ? 'high' : 'low';
       img.onload = () => {
         frames[i] = img;
         lastKey = '';
@@ -147,11 +152,11 @@ export function createFramePlayer(canvas, { preloadAll = true } = {}) {
   function loadAll() {
     const saveData = navigator.connection?.saveData;
     const order = [];
-    const seen = new Set([0]);
+    const seen = new Set([first]);
     const push = (i) => { if (!seen.has(i)) { seen.add(i); order.push(i); } };
     push(count - 1);
     for (const stride of saveData ? [32, 16, 8, 4] : [32, 16, 8, 4, 2, 1]) {
-      for (let i = 0; i < count; i += stride) push(i);
+      for (let i = first; i < count; i += stride) push(i);
     }
     let next = 0;
     let active = 0;
@@ -164,7 +169,7 @@ export function createFramePlayer(canvas, { preloadAll = true } = {}) {
     pump();
   }
 
-  load(0).then(() => {
+  load(first).then(() => {
     if (!preloadAll) return;
     // Ostali kadrovi nakon što se stranica učita, da ne usporavaju prvi prikaz
     if (document.readyState === 'complete') setTimeout(loadAll, 200);
@@ -193,7 +198,7 @@ export function createFramePlayer(canvas, { preloadAll = true } = {}) {
   function draw(p) {
     if (!W || !H) resize();
     if (!count) return;
-    const pos = clamp(p) * (count - 1);
+    const pos = (startAt + clamp(p) * (1 - startAt)) * (count - 1);
     const i0 = Math.floor(pos);
     const a = nearest(i0);
     if (a === -1) return;
@@ -218,14 +223,14 @@ export function createFramePlayer(canvas, { preloadAll = true } = {}) {
       dh = ih * scale;
       // Kad auto skrene lijevo, kadar se pomjeri udesno (koliko dozvoljava rezanje slike),
       // da auto ostane lijevo, a desno bude mjesta za tekst i na ekranima užim od 16:9
-      const pan = lerp(0.5, 1, smooth(clamp((p - 0.28) / 0.22)));
+      const pan = lerp(0.5, 1, smooth(clamp((p - 0.2) / 0.22)));
       dx = -(dw - W) * pan;
       dy = (H - dh) / 2;
     } else {
       dh = Math.max(H * 0.5, W * (ih / iw));
       dw = dh * (iw / ih);
       dy = H - dh;
-      const focus = lerp(0.5, 0.33, smooth(clamp((p - 0.38) / 0.24)));
+      const focus = lerp(0.5, 0.33, smooth(clamp((p - 0.3) / 0.24)));
       dx = clamp(W / 2 - focus * dw, W - dw, 0);
       const [r, g, bl] = topColor(a);
       const sky = ctx.createLinearGradient(0, 0, 0, dy + 2);
