@@ -7,7 +7,7 @@ Upotreba:
 Napravi:
     public/hero-frames/d/001.webp ...   svi kadrovi, 1280 px (desktop)
     public/hero-frames/m/001.webp ...   svaki drugi kadar, 960 px (telefon)
-    public/img/hero-poster.webp         prvi kadar (glavna slika dok se animacija ne učita)
+    public/img/hero-start.webp          kadar od kojeg animacija počinje (data-start, zadano 25 %)
 
 Broj kadrova upišite u index.html na <canvas class="hero-canvas"> (data-frames, data-frames-mobile).
 Statičnu sliku za telefon i OG sliku pravi stranica sama (vidi README, „Hero animacija“).
@@ -40,7 +40,8 @@ def main():
     common = ["-hide_banner", "-loglevel", "error", "-y", "-i", src, "-an", "-c:v", "libwebp", "-compression_level", "6"]
     run([ff, *common, "-vf", "scale=1280:-2", "-quality", "72", OUT / "d" / "%03d.webp"])
     run([ff, *common, "-vf", "fps=12,scale=960:-2", "-quality", "68", OUT / "m" / "%03d.webp"])
-    shutil.copy(OUT / "d" / "001.webp", ROOT / "public" / "img" / "hero-poster.webp")
+    frames = sorted((OUT / "d").glob("*.webp"))
+    shutil.copy(frames[round(0.25 * (len(frames) - 1))], ROOT / "public" / "img" / "hero-start.webp")
     for folder in ("d", "m"):
         files = sorted((OUT / folder).glob("*.webp"))
         size = sum(f.stat().st_size for f in files) / 1e6

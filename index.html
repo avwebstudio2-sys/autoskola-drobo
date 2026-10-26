@@ -9,8 +9,8 @@
   <meta name="theme-color" content="#16171b" />
   <script>document.documentElement.classList.add('js')</script>
   <!--ssr:head-->
-  <link rel="preload" as="image" href="/img/hero-poster.webp" type="image/webp" media="(min-width: 721px)" fetchpriority="high" />
-  <link rel="preload" as="image" href="/img/hero-poster-mobile.webp" type="image/webp" media="(max-width: 720px)" fetchpriority="high" />
+  <link rel="preload" as="image" href="/img/hero-start.webp" type="image/webp" media="(min-width: 721px)" fetchpriority="high" />
+  <link rel="preload" as="image" href="/img/hero-start-mobile.webp" type="image/webp" media="(max-width: 720px)" fetchpriority="high" />
   <link rel="icon" href="/img/favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -27,13 +27,13 @@
     <div class="hero-sticky">
       <div class="hero-media">
         <picture>
-          <source media="(max-width: 720px)" srcset="/img/hero-poster-mobile.webp" width="720" height="1280" />
-          <img class="hero-poster" src="/img/hero-poster.webp" width="1280" height="720" fetchpriority="high" decoding="async"
+          <source media="(max-width: 720px)" srcset="/img/hero-start-mobile.webp" width="720" height="1280" />
+          <img class="hero-poster" src="/img/hero-start.webp" width="1280" height="720" fetchpriority="high" decoding="async"
             alt="Auto autoškole Edukacija – Drobo vozi praznom cestom u zalazak sunca kod Travnika" />
         </picture>
         <!-- Kadrovi videa za premotavanje skrolom (scripts/prepare_hero_frames.py) -->
         <canvas class="hero-canvas" aria-hidden="true"
-          data-frames="240" data-path="/hero-frames/d/" data-poster="/img/hero-poster.webp" data-start="0.25"
+          data-frames="240" data-path="/hero-frames/d/" data-start="0.25"
           data-frames-mobile="120" data-path-mobile="/hero-frames/m/"></canvas>
       </div>
       <div class="hero-shade" aria-hidden="true"></div>
