@@ -105,7 +105,7 @@ Hero prikazuje video vožnje (auto autoškole) koji se premotava skrolom. Video 
 - `public/hero-frames/d/` – svih 240 kadrova, 1280 px (desktop, oko 5,1 MB)
 - `public/hero-frames/m/` – 120 kadrova, 960 px (telefon, oko 1,6 MB)
 - Kadrovi se učitavaju postepeno (prvo svaki 32., pa sve gušće) nakon što se stranica učita.
-- Animacija počinje od 25 % videa (`data-start="0.25"` na `<canvas class="hero-canvas">`), kad je auto već bliže; raniji kadrovi se ne učitavaju. Početne slike (`public/img/hero-poster.webp` i `hero-poster-mobile.webp`) su kadar s tog mjesta. Ako mijenjate početak, uskladite i vremena u `src/lib/hero.js` (`STAGES`, `SIDE_SWITCH`).
+- Animacija počinje od 25 % videa (`data-start="0.25"` na `<canvas class="hero-canvas">`), kad je auto već bliže; raniji kadrovi se ne učitavaju. Početne slike (`public/img/hero-start.webp` i `hero-start-mobile.webp`) su kadar s tog mjesta; kad se promijene, dajte im novo ime (slike u `/img/` se keširaju 7 dana). Ako mijenjate početak, uskladite i vremena u `src/lib/hero.js` (`STAGES`, `SIDE_SWITCH`).
 - Na desktopu tekst prelazi desno kad auto skrene lijevo (`data-side="right"` na `.hero-stage`), a kadar se blago pomjeri da auto ostane lijevo.
 - Na uspravnom ekranu (telefon) video je traka na dnu, a iznad nje nebo u boji vrha kadra, iza teksta.
 
@@ -125,7 +125,7 @@ Zatim u `index.html` na `<canvas class="hero-canvas">` upišite broj kadrova (`d
 - **Meta oznake** (canonical, Open Graph, Twitter) i **JSON-LD** (`LocalBusiness`, `FAQPage`) pravi isti plugin. Title i description su upisani u svaki HTML fajl.
 - **Adresa sajta** za canonical, `og:url`, `robots.txt` i `sitemap.xml`: Netlify je sam postavlja (varijabla `URL`, uvijek glavna domena), a na Vercelu `VERCEL_PROJECT_PRODUCTION_URL`. Lokalno se koristi `https://autoskola-drobo.netlify.app`, a može se pregaziti varijablom `SITE_URL`.
 - **`robots.txt` i `sitemap.xml`** nastaju pri buildu u `dist/`, pored `index.html`.
-- **Slike**: `public/img/hero-poster.webp` (prvi kadar videa) i `hero-poster-mobile.webp` (ista kompozicija kao animacija na telefonu) su glavna slika i učitavaju se odmah. `og-image.jpg` (1200×630) je slika za dijeljenje na društvenim mrežama: kadar s autom i slogan.
+- **Slike**: `public/img/hero-start.webp` (kadar od kojeg animacija počinje) i `hero-start-mobile.webp` (ista kompozicija kao animacija na telefonu) su glavna slika i učitavaju se odmah. `og-image.jpg` (1200×630) je slika za dijeljenje na društvenim mrežama: kadar s autom i slogan.
 
 ## Struktura
 
