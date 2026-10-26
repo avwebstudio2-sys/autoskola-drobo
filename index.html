@@ -169,18 +169,19 @@
             <h3 class="form-title">Prijava za upis</h3>
             <div class="field">
               <label for="f-name">Ime i prezime <span class="req" aria-hidden="true">*</span></label>
-              <input class="input" id="f-name" name="fullName" autocomplete="name" required minlength="3" maxlength="120" aria-describedby="f-name-err" />
+              <input class="input" id="f-name" name="fullName" autocomplete="name" required minlength="3" maxlength="120" placeholder="Vaše ime i prezime" aria-describedby="f-name-err" />
               <p class="field-error" id="f-name-err">Upišite ime i prezime.</p>
             </div>
             <div class="form-row">
               <div class="field">
                 <label for="f-dob">Datum rođenja <span class="req" aria-hidden="true">*</span></label>
-                <input class="input" id="f-dob" name="dob" type="date" autocomplete="bday" required aria-describedby="f-dob-err" />
+                <!-- Bez "dd.mm.gggg": polje je tekstualno s opisom, a pri dodiru postaje biranje datuma (home.js) -->
+                <input class="input" id="f-dob" name="dob" type="text" data-date autocomplete="bday" placeholder="Odaberite datum rođenja" required aria-describedby="f-dob-err" />
                 <p class="field-error" id="f-dob-err">Unesite ispravan datum rođenja.</p>
               </div>
               <div class="field">
                 <label for="f-phone">Broj telefona <span class="req" aria-hidden="true">*</span></label>
-                <input class="input" id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="06x xxx xxx" required aria-describedby="f-phone-err" />
+                <input class="input" id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Vaš broj mobitela" required aria-describedby="f-phone-err" />
                 <p class="field-error" id="f-phone-err">Unesite broj telefona (najmanje 6 cifara).</p>
               </div>
             </div>

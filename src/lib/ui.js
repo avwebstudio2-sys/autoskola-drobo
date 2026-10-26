@@ -256,6 +256,35 @@ export function renderFooter(settings) {
   return footer;
 }
 
+/**
+ * Prozor za potvrdu u stilu stranice (umjesto confirm() preglednika).
+ * Vraća Promise<boolean>: true za potvrdu, false za odustajanje (dugme, Escape ili klik pored).
+ */
+export function confirmDialog({ title, text = '', confirmLabel = 'Potvrdi', cancelLabel = 'Odustani', danger = false } = {}) {
+  return new Promise((resolve) => {
+    const dlg = document.createElement('dialog');
+    dlg.className = 'confirm-dialog';
+    dlg.setAttribute('aria-labelledby', 'confirm-title');
+    dlg.innerHTML = `
+      <form method="dialog" class="confirm-box">
+        <h2 class="confirm-title" id="confirm-title">${esc(title)}</h2>
+        ${text ? `<p class="confirm-text">${esc(text)}</p>` : ''}
+        <div class="confirm-actions">
+          <button class="btn btn-ghost" value="cancel">${esc(cancelLabel)}</button>
+          <button class="btn ${danger ? 'btn-danger' : 'btn-primary'}" value="ok">${esc(confirmLabel)}</button>
+        </div>
+      </form>`;
+    document.body.append(dlg);
+    dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close('cancel'); });
+    dlg.addEventListener('close', () => {
+      resolve(dlg.returnValue === 'ok');
+      dlg.remove();
+    });
+    dlg.showModal();
+    dlg.querySelector('button[value="ok"]').focus();
+  });
+}
+
 let toastTimer;
 export function toast(message, type = 'info') {
   let el = document.querySelector('.toast');

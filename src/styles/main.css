@@ -793,3 +793,31 @@ ul { margin: 0; padding: 0; list-style: none; }
   }
   .js [data-reveal] { opacity: 1; transform: none; }
 }
+
+/* ---------- Prozor za potvrdu (confirmDialog u ui.js) ---------- */
+.confirm-dialog {
+  width: min(440px, calc(100vw - 32px));
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-lg);
+  background: var(--card);
+  color: var(--text-on-light);
+  box-shadow: var(--shadow-lg);
+}
+.confirm-dialog[open] { animation: dialog-in 0.22s var(--ease-out); }
+.confirm-dialog::backdrop { background: rgba(10, 10, 12, 0.7); backdrop-filter: blur(3px); }
+@keyframes dialog-in { from { opacity: 0; transform: translateY(12px) scale(0.98); } }
+.confirm-box { display: grid; gap: 12px; padding: clamp(22px, 4vw, 30px); }
+.confirm-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.8rem;
+  text-transform: uppercase;
+  line-height: 1.05;
+}
+.confirm-text { color: var(--muted-on-light); }
+.confirm-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; margin-top: 10px; }
+.confirm-actions .btn-ghost:hover { --btn-bg: rgba(0, 0, 0, 0.05); }
+.btn-danger { --btn-bg: var(--red); --btn-border: var(--red); --btn-fg: #fff; }
+.btn-danger:hover { --btn-bg: var(--red-hover); --btn-border: var(--red-hover); }
+@media (max-width: 420px) { .confirm-actions .btn { flex: 1 1 100%; } }
