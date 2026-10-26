@@ -1,6 +1,6 @@
 import { renderHeader, renderFooter, icon, esc, toast } from '../lib/ui.js';
 import { getSettings } from '../lib/content.js';
-import { SETS, questionsForSet, quizHubHTML } from '../lib/render.js';
+import { SETS, questionsForSet, quizHubHTML, EXAM_MAX_POINTS, passPoints, passText } from '../lib/render.js';
 
 /* ==========================================================================
    Online učenje: lekcije i simulacije ispita (po uzoru na driver.ba/testovi)
@@ -368,7 +368,9 @@ function createRunner(cfg) {
     const results = questions.map((q, i) => ({ q, sel: state.selected[i], ok: isCorrect(q, state.selected[i]) }));
     const correct = results.filter((r) => r.ok).length;
     const pct = Math.round((correct / questions.length) * 100);
-    const pass = pct >= Number(settings.passPercent || 90);
+    // Rezultat preračunat na bodove ispita (120): za prolaz je presudno 108 bodova
+    const points = Math.round((correct / questions.length) * EXAM_MAX_POINTS);
+    const pass = points >= passPoints(settings);
     const secs = Math.floor((Date.now() - state.started) / 1000);
 
     const progress = loadProgress();
@@ -395,7 +397,7 @@ function createRunner(cfg) {
               <p class="eyebrow">${esc(cfg.title)}</p>
               <h1 class="section-title">${mode === 'exam' ? (pass ? 'Položeno!' : 'Nije položeno') : pct === 100 ? 'Sve tačno!' : 'Lekcija završena'}</h1>
               <p class="lead">${mode === 'exam'
-                ? `Potrebno je ${settings.passPercent}% za prolaz. Vrijeme: ${Math.floor(secs / 60)} min ${secs % 60} s.`
+                ? `Osvojeno <strong>${points} od ${EXAM_MAX_POINTS} bodova</strong>, a za prolaz je potrebno <strong>${passText(settings)}</strong> (${settings.passPercent}%). Vrijeme: ${Math.floor(secs / 60)} min ${secs % 60} s.`
                 : `${wrong.length ? `Pogrešnih odgovora: ${wrong.length}. Pogledaj ih ispod i ponovi lekciju.` : 'Odlično, pređi na sljedeću lekciju.'}`}</p>
               <div class="hero-buttons">
                 ${nextLesson ? `<a class="btn btn-primary" href="${nextLesson}">Sljedeća lekcija ${icon('arrow', { size: 18 })}</a>` : ''}

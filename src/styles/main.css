@@ -81,6 +81,27 @@ body.no-scroll {
   overflow: hidden;
 }
 
+/* ---------- Prilagođeni scrollbar ---------- */
+::-webkit-scrollbar { width: 12px; height: 12px; }
+::-webkit-scrollbar-track { background: var(--asphalt-950); }
+::-webkit-scrollbar-thumb {
+  border: 3px solid var(--asphalt-950);
+  border-radius: 999px;
+  background: var(--asphalt-600);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--red); }
+::-webkit-scrollbar-corner { background: var(--asphalt-950); }
+/* Unutrašnje liste i tabele: tanji, bez tamne podloge */
+.cs-list::-webkit-scrollbar, .table-wrap::-webkit-scrollbar { width: 8px; height: 8px; }
+.cs-list::-webkit-scrollbar-track, .table-wrap::-webkit-scrollbar-track { background: transparent; }
+.cs-list::-webkit-scrollbar-thumb, .table-wrap::-webkit-scrollbar-thumb { border: 2px solid transparent; background: var(--asphalt-300) padding-box; }
+.cs-list::-webkit-scrollbar-thumb:hover, .table-wrap::-webkit-scrollbar-thumb:hover { background: var(--red) padding-box; }
+/* Firefox (podržava samo boju i debljinu) */
+@supports (-moz-appearance: none) {
+  html { scrollbar-color: var(--asphalt-600) var(--asphalt-950); }
+  .cs-list, .table-wrap { scrollbar-width: thin; scrollbar-color: var(--asphalt-300) transparent; }
+}
+
 img, svg, video, canvas { display: block; max-width: 100%; }
 a { color: inherit; }
 button, input, select, textarea { font: inherit; color: inherit; }
@@ -506,6 +527,54 @@ ul { margin: 0; padding: 0; list-style: none; }
   box-shadow: 0 0 0 4px var(--red-soft);
 }
 .field.has-error .input, .field.has-error .select, .field.has-error .textarea { border-color: var(--red); }
+
+/* ---------- Prilagođeni padajući meni (src/lib/select.js) ---------- */
+.cs { position: relative; display: block; min-width: 0; }
+.cs-native {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  opacity: 0; pointer-events: none;
+}
+.cs-trigger {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  text-align: left; cursor: pointer;
+  background-image: none;
+  padding-right: 12px;
+}
+.cs-trigger .cs-value { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cs-trigger.is-placeholder .cs-value { color: var(--muted-on-light); }
+.cs-chevron { flex: none; color: var(--asphalt-600); transition: transform 0.25s var(--ease-out), color 0.2s ease; }
+.cs-trigger:hover { border-color: var(--asphalt-400); }
+.cs.is-open .cs-trigger { border-color: var(--red); box-shadow: 0 0 0 4px var(--red-soft); }
+.cs.is-open .cs-chevron { transform: rotate(180deg); color: var(--red); }
+.cs-trigger:disabled { opacity: 0.6; cursor: not-allowed; }
+.cs-list {
+  position: fixed; z-index: 400;
+  margin: 0; padding: 6px;
+  overflow-y: auto; overscroll-behavior: contain;
+  list-style: none;
+  border-radius: var(--radius);
+  background: #fff;
+  color: var(--text-on-light);
+  box-shadow: 0 0 0 1px var(--line-light), 0 24px 50px -20px rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 0.16s ease, transform 0.16s var(--ease-out);
+}
+.cs-list.is-up { transform: translateY(6px); }
+.cs-list.is-open { opacity: 1; transform: none; }
+.cs-option {
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  min-height: 42px; padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.cs-option.is-active { background: var(--paper); }
+.cs-option[aria-selected='true'] { color: var(--red); font-weight: 700; }
+.cs-option .cs-check { flex: none; opacity: 0; }
+.cs-option[aria-selected='true'] .cs-check { opacity: 1; }
+.cs-option[aria-disabled='true'] { opacity: 0.45; cursor: default; }
 .field-error { display: none; font-size: 0.875rem; font-weight: 600; color: var(--red-hover); }
 .field.has-error .field-error { display: block; }
 
@@ -593,6 +662,7 @@ ul { margin: 0; padding: 0; list-style: none; }
   font-size: 1.3rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  white-space: nowrap;
   color: var(--paper);
 }
 .footer-title {
@@ -606,7 +676,7 @@ ul { margin: 0; padding: 0; list-style: none; }
 .footer-list { display: grid; gap: 12px; }
 .footer-list li { display: flex; gap: 10px; align-items: flex-start; }
 .footer-list .icon { margin-top: 3px; color: var(--red); }
-.footer-list a { text-decoration: none; }
+.footer-list a { text-decoration: none; transition: color 0.2s ease; }
 .footer-list a:hover { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
 .footer-links li { display: block; }
 .footer-bottom {
@@ -623,7 +693,7 @@ ul { margin: 0; padding: 0; list-style: none; }
 .footer-legal { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; }
 .footer-sep { width: 1px; height: 14px; background: currentColor; opacity: 0.45; }
 .footer-admin { margin-left: 8px; }
-.footer-admin { opacity: 0.6; text-decoration: none; }
+.footer-admin { opacity: 0.6; text-decoration: none; transition: opacity 0.2s ease; }
 .footer-admin:hover { opacity: 1; }
 .footer-credit {
   display: inline-flex;
@@ -637,13 +707,11 @@ ul { margin: 0; padding: 0; list-style: none; }
 .footer-credit img {
   width: 26px;
   height: auto;
-  filter: invert(1);
-  opacity: 0.85;
-  transition: opacity 0.2s ease;
+  /* Logo je taman: brightness(0) + invert(1) daje čisto bijel znak */
+  filter: brightness(0) invert(1);
 }
 .footer-credit strong { color: var(--paper); font-weight: 700; }
 .footer-credit:hover { color: #fff; }
-.footer-credit:hover img { opacity: 1; }
 
 @media (max-width: 900px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 520px) { .footer-grid { grid-template-columns: 1fr; } }
@@ -686,7 +754,7 @@ ul { margin: 0; padding: 0; list-style: none; }
   .site-footer { padding-top: 44px; }
   .footer-grid { gap: 28px; }
   .footer-logo { width: 104px; }
-  .footer-slogan { font-size: 1.1rem; }
+  .footer-slogan { font-size: clamp(0.85rem, 4.2vw, 1.1rem); letter-spacing: 0.05em; }
   /* Pravni tekst i potpis na telefonu u sredini; bez uspravne crte kad su u dva reda */
   .footer-bottom { margin-top: 36px; flex-direction: column; align-items: center; text-align: center; gap: 4px; }
   .footer-legal { flex-direction: column; justify-content: center; gap: 2px; }

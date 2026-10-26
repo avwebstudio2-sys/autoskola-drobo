@@ -6,12 +6,14 @@ import { firebaseReady } from '../lib/firebase.js';
 import { db, auth } from '../lib/admin-firebase.js';
 import { DEFAULTS, DEFAULT_SETTINGS, EXAM_TYPES, PROGRAMS, WEEKDAYS, CLASS_LOCATIONS, CLASS_TYPES, sortList, todayISO } from '../lib/defaults.js';
 import { logoSVG, icon, esc, toast, formatDate } from '../lib/ui.js';
+import { initCustomSelects } from '../lib/select.js';
 
 /* ==========================================================================
    Administracija: sve što se vidi na stranici uređuje se ovdje.
    ========================================================================== */
 
 const root = document.getElementById('admin-root');
+initCustomSelects();
 const dialog = document.getElementById('edit-dialog');
 
 const STATUSES = {
@@ -126,7 +128,7 @@ const SETTINGS_FIELDS = [
   { key: 'requiredDocs', label: 'Potrebna dokumentacija (jedna stavka po redu)', type: 'lines' },
   { key: 'docsNote', label: 'Napomena uz dokumentaciju', type: 'textarea' },
   { group: 'Online testovi' },
-  { key: 'passPercent', label: 'Prag za prolaz (%)', type: 'number', min: 1, max: 100 },
+  { key: 'passPercent', label: 'Prag za prolaz (%) · 90% = 108 od 120 bodova', type: 'number', min: 1, max: 100 },
   { key: 'testTheory', label: 'Broj pitanja teorije u testu', type: 'number', min: 1, max: 60 },
   { key: 'testSigns', label: 'Broj znakova u testu', type: 'number', min: 0, max: 40 },
   { key: 'testIntersections', label: 'Broj raskrsnica u testu', type: 'number', min: 0, max: 40 },

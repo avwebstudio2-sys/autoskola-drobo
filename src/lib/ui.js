@@ -135,9 +135,9 @@ export function headerHTML(current = 'home') {
         <ul>
           ${NAV.map((l) => `<li><a href="${l.href}"${l.page === current ? ' aria-current="page"' : ''}>${l.label}</a></li>`).join('')}
         </ul>
-        <a class="btn btn-primary nav-cta-mobile" href="/testovi">${icon('laptop')} Online testovi</a>
+        ${current === 'testovi' ? '' : `<a class="btn btn-primary nav-cta-mobile" href="/testovi">${icon('laptop')} Online testovi</a>`}
       </nav>
-      <a class="btn btn-primary btn-sm header-cta${current === 'testovi' ? ' is-current' : ''}" href="/testovi">${icon('laptop', { size: 18 })}<span>Online testovi</span></a>
+      ${current === 'testovi' ? '' : `<a class="btn btn-primary btn-sm header-cta" href="/testovi">${icon('laptop', { size: 18 })}<span>Online testovi</span></a>`}
       <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Otvori meni">${icon('menu', { size: 24 })}</button>
     </div>`;
 }

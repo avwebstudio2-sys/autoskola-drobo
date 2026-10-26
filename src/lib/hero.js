@@ -77,7 +77,7 @@ export function initHero(hero) {
     last = now;
     if (visible) {
       // Mekano praćenje skrola: kotačić miša skače, a animacija se kreće glatko
-      current = lerp(current, target, 1 - Math.pow(0.002, dt));
+      current = lerp(current, target, 1 - Math.pow(0.0005, dt));
       if (Math.abs(current - target) < 0.0002) current = target;
       applyStages(current);
       player.draw(current);

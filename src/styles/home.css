@@ -3,7 +3,7 @@
 .hero {
   --side: 0;
   position: relative;
-  height: 340vh;
+  height: 260vh;
   background: var(--asphalt-950);
 }
 .hero-sticky {
@@ -65,8 +65,6 @@
   .hero-stage[data-side='right'] {
     justify-self: end;
     align-self: start;
-    /* Na širokim ekranima do desne ivice ekrana (izvan 1200 px sadržaja), dalje od auta */
-    margin-right: min(0px, calc((var(--container) + 2 * var(--gutter) - 100vw) / 2));
     max-width: min(36vw, 480px);
     padding-top: calc(var(--header-h) + clamp(28px, 7vh, 80px));
     text-align: right;
@@ -198,7 +196,7 @@
 }
 
 @media (max-width: 720px) {
-  .hero { height: 300vh; }
+  .hero { height: 230vh; }
   /* Tekst je pri vrhu preko neba, pa je zatamnjenje gore, a auto i cesta ispod ostaju vidljivi */
   .hero-shade {
     background: linear-gradient(180deg, rgba(15, 16, 19, 0.7) 0%, rgba(15, 16, 19, 0.45) 45%, rgba(15, 16, 19, 0) 65%, rgba(15, 16, 19, 0.3) 100%);
@@ -209,7 +207,34 @@
   .hero-actions .btn { flex: 1 1 100%; }
 }
 
+/* Na telefonu: naznaka za skrolanje odmah ispod dugmadi, u praznom prostoru iznad auta */
+.hero-scroll-m { display: none; }
+@media (max-width: 720px) {
+  .hero-scroll-m {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    width: fit-content;
+    margin: clamp(22px, 5svh, 44px) auto 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--paper);
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+  }
+  .hero-scroll-m svg { color: var(--red); animation: cue-bounce 1.6s var(--ease-out) infinite; }
+}
+@keyframes cue-bounce {
+  0%, 100% { transform: translateY(0); opacity: 1; }
+  50% { transform: translateY(7px); opacity: 0.55; }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .hero-scroll-m svg { animation: none; }
   .hero { height: auto; }
   .hero-sticky { position: relative; }
   .hero-stage:not([data-stage='0']) { display: none; }
@@ -571,12 +596,13 @@
   gap: 20px;
   align-items: stretch;
 }
-.contact-cards { display: grid; gap: 12px; align-content: start; }
+.contact-cards { display: grid; gap: 12px; grid-auto-rows: 1fr; }
 .contact-cards li {
   display: flex;
   gap: 14px;
   padding: 18px;
   border-radius: var(--radius);
+  align-items: center;
   background: var(--asphalt-850);
   border: 1px solid var(--line-dark);
 }
@@ -599,7 +625,7 @@
   text-transform: uppercase;
   color: var(--muted-on-dark);
 }
-.contact-cards a, .contact-cards span.val { font-weight: 600; text-decoration: none; word-break: break-word; }
+.contact-cards a, .contact-cards span.val { font-weight: 600; text-decoration: none; word-break: break-word; transition: color 0.2s ease; }
 .contact-cards a:hover { color: var(--red); }
 .map-wrap {
   min-height: 360px;
@@ -632,7 +658,7 @@
   .contact-grid { grid-template-columns: 1fr 1fr; }
   .map-wrap { grid-column: 1 / -1; grid-row: 2; }
 }
-@media (max-width: 680px) { .contact-grid { grid-template-columns: 1fr; } .map-wrap { grid-row: auto; } }
+@media (max-width: 680px) { .contact-grid { grid-template-columns: 1fr; } .map-wrap { grid-row: auto; } .contact-cards { grid-auto-rows: auto; } }
 
 /* ---------- Print: uputstvo za dokumentaciju ---------- */
 
