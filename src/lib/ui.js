@@ -238,7 +238,7 @@ export function footerHTML(settings) {
         <a href="/admin" class="footer-admin">Administracija</a>
       </div>
       <a class="footer-credit" href="https://avstudio.site" target="_blank" rel="noopener">
-        <span>Stranicu izradio <strong>A&amp;V Web Studio</strong></span>
+        <span>Stranicu izradio – <strong>A&amp;V Web Studio</strong></span>
         <img src="/img/avstudio-logo.webp" alt="A&amp;V Web Studio logo" width="18" height="15" loading="lazy" />
       </a>
     </div>`;

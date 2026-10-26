@@ -203,7 +203,7 @@ function renderLogin() {
     } catch (err) {
       console.error(err);
       status.dataset.type = 'error';
-      status.textContent = 'Pogrešan e-mail ili lozinka.';
+      status.textContent = loginError(err);
       btn.disabled = false;
     }
   });
@@ -219,6 +219,29 @@ function renderLogin() {
       status.textContent = 'Slanje nije uspjelo. Provjerite e-mail adresu.';
     }
   });
+}
+
+/* Poruka prema stvarnom razlogu greške (ranije je sve prikazano kao „pogrešna lozinka“) */
+function loginError(err) {
+  switch (err?.code) {
+    case 'auth/invalid-credential':
+    case 'auth/invalid-login-credentials':
+    case 'auth/wrong-password':
+    case 'auth/user-not-found':
+    case 'auth/invalid-email':
+      return 'Pogrešan e-mail ili lozinka.';
+    case 'auth/too-many-requests':
+      return 'Previše neuspješnih pokušaja. Sačekajte nekoliko minuta ili promijenite lozinku preko „Zaboravljena lozinka?“.';
+    case 'auth/user-disabled':
+      return 'Ovaj nalog je isključen u Firebase konzoli.';
+    case 'auth/network-request-failed':
+      return 'Nema veze sa serverom za prijavu. Provjerite internet; prijava ne radi u pregledima (preview) stranice, nego samo na objavljenoj adresi.';
+    case 'auth/unauthorized-domain':
+    case 'auth/requests-from-referer-blocked':
+      return 'Ova adresa nije dozvoljena za prijavu. Dodajte domenu u Firebase konzoli (Authentication → Settings → Authorized domains).';
+    default:
+      return `Prijava nije uspjela (${err?.code || 'nepoznata greška'}).`;
+  }
 }
 
 function renderNotAdmin(user) {
