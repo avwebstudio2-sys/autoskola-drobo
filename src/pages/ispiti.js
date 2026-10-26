@@ -1,9 +1,11 @@
 import { renderHeader, renderFooter } from '../lib/ui.js';
 import { getSettings, getList, todayISO } from '../lib/content.js';
 import { examListHTML, examCategoryOptionsHTML, splitCategories } from '../lib/render.js';
+import { initCustomSelects } from '../lib/select.js';
 
 /* Lista rokova je već upisana u HTML pri buildu; ovdje se osvježava iz baze i dodaju filteri. */
 renderHeader('ispiti');
+initCustomSelects();
 
 const list = document.getElementById('exam-list');
 const typeFilter = document.getElementById('type-filter');

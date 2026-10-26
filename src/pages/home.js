@@ -6,6 +6,7 @@ import {
 } from '../lib/render.js';
 import { firebaseReady } from '../lib/firebase.js';
 import { initHero } from '../lib/hero.js';
+import { initCustomSelects } from '../lib/select.js';
 
 /*
  * Sav sadržaj je već upisan u HTML pri buildu (scripts/prerender-plugin.mjs).
@@ -15,6 +16,7 @@ import { initHero } from '../lib/hero.js';
 let settings = null;
 
 renderHeader('home');
+initCustomSelects();
 injectIcons(document);
 initHero(document.querySelector('.hero'));
 initReveal();

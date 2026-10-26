@@ -14,6 +14,7 @@
   font-weight: 600;
   color: var(--muted-on-dark);
   text-decoration: none;
+  transition: color 0.2s ease;
 }
 .back-link:hover { color: #fff; }
 .section--paper .back-link, .runner .back-link { color: var(--muted-on-light); }
@@ -97,7 +98,8 @@
   text-decoration: none;
   box-shadow: 0 1px 0 var(--line-light);
   transition: transform 0.25s var(--ease-out), box-shadow 0.25s ease;
-  animation: rise 0.5s var(--ease-out) both;
+  /* backwards (ne both): nakon ulaska animacija pušta transform, pa hover ima glatki prelaz */
+  animation: rise 0.5s var(--ease-out) backwards;
   animation-delay: calc(var(--i, 0) * 50ms);
 }
 .set-card a:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
@@ -161,9 +163,9 @@
   color: var(--text-on-light);
   text-decoration: none;
   border: 2px solid transparent;
-  transition: border-color 0.2s ease, transform 0.2s var(--ease-out);
+  transition: border-color 0.25s ease, transform 0.25s var(--ease-out), box-shadow 0.25s ease;
 }
-.lesson-tile:hover { border-color: var(--red); transform: translateY(-2px); }
+.lesson-tile:hover { border-color: var(--red); transform: translateY(-2px); box-shadow: var(--shadow-lg); }
 .lesson-n {
   display: grid;
   place-items: center;

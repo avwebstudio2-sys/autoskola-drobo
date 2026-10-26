@@ -262,6 +262,7 @@ code {
 .toolbar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
 .toolbar .input { flex: 1 1 260px; min-height: 46px; }
 .toolbar .select { flex: 0 1 220px; min-height: 46px; }
+.toolbar .cs { flex: 0 1 220px; }
 
 .table-wrap {
   overflow-x: auto;

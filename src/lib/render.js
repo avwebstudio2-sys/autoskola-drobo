@@ -163,6 +163,11 @@ export const SETS = {
   'prva-pomoc': { label: 'Prva pomoć', sub: 'Ispit iz pružanja prve pomoći', kind: 'firstaid', size: 20, icon: 'aid' },
 };
 
+/* Ispit iz teorije nosi najviše 120 bodova; prag u postocima (zadano 90 %) odgovara 108 bodova */
+export const EXAM_MAX_POINTS = 120;
+export const passPoints = (settings) => Math.round((EXAM_MAX_POINTS * Number(settings.passPercent || 90)) / 100);
+export const passText = (settings) => `${passPoints(settings)} od ${EXAM_MAX_POINTS} bodova`;
+
 export function questionsForSet(data, key) {
   const set = SETS[key];
   if (!set) return [];
@@ -225,7 +230,7 @@ export function quizHubHTML({ mode, data, settings, progress = { lessons: {}, te
     <section class="section section--paper quiz-sets">
       <div class="container">
         ${mode === 'test'
-          ? `<div class="info-strip">${icon('trophy')}<p>Test za kategoriju sadrži <strong>${settings.testTheory} pitanja teorije, ${settings.testSigns} znakova i ${settings.testIntersections} raskrsnica</strong>. Za prolaz je potrebno najmanje <strong>${settings.passPercent}%</strong> tačnih odgovora. Pitanja s više tačnih odgovora su označena.</p></div>`
+          ? `<div class="info-strip">${icon('trophy')}<p>Test za kategoriju sadrži <strong>${settings.testTheory} pitanja teorije, ${settings.testSigns} znakova i ${settings.testIntersections} raskrsnica</strong>. Za prolaz je potrebno <strong>${passText(settings)}</strong> (${settings.passPercent}% tačnih odgovora). Pitanja s više tačnih odgovora su označena.</p></div>`
           : `<div class="info-strip">${icon('check')}<p>Odaberi odgovor i klikni <strong>Provjeri</strong>: tačan odgovor se odmah prikaže. Lekcije za teoriju sadrže po ${SETS.B.size} pitanja, a znakovi i raskrsnice po ${SETS.znakovi.size}.</p></div>`}
         <h2 class="sets-title">Kategorije</h2>
         <ul class="set-grid">${cards}</ul>
