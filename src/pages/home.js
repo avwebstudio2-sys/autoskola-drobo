@@ -1,4 +1,4 @@
-import { renderHeader, renderFooter, icon, esc, toast, initReveal, telHref } from '../lib/ui.js';
+import { renderHeader, renderFooter, icon, esc, initReveal, telHref } from '../lib/ui.js';
 import { getSettings, getList, submitEnrollment, submitMessage, todayISO } from '../lib/content.js';
 import {
   announcementHTML, servicesHTML, categoriesHTML, scheduleHTML, examPreviewHTML, faqHTML,
@@ -103,6 +103,10 @@ function validateField(el) {
   if (el.required && !v) return setError(el, true);
   if (el.minLength > 0 && v.length < el.minLength) return setError(el, true);
   if (el.type === 'tel') return setError(el, v.replace(/\D/g, '').length < 6);
+  if (el.dataset.validate === 'contact') {
+    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+    return setError(el, !isEmail && v.replace(/\D/g, '').length < 6);
+  }
   if (el.type === 'date' && v) {
     const year = Number(v.slice(0, 4));
     const now = new Date().getFullYear();
@@ -124,6 +128,20 @@ function validateForm(form) {
   const firstBad = fields[results.indexOf(false)];
   if (firstBad) firstBad.focus();
   return !firstBad;
+}
+
+/** Slanje ne smije visiti bez kraja (spora mreža, blokator): nakon 20 s javi grešku. */
+function withTimeout(promise, ms = 20000) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => { setTimeout(() => reject(new Error('Isteklo vrijeme za slanje')), ms); }),
+  ]);
+}
+
+function setBusy(btn, busy, label) {
+  btn.disabled = busy;
+  btn.setAttribute('aria-busy', String(busy));
+  btn.textContent = label;
 }
 
 /* ---------- Upis ---------- */
@@ -149,8 +167,7 @@ function setupEnrollForm() {
       return;
     }
     const btn = form.querySelector('button[type="submit"]');
-    btn.disabled = true;
-    btn.textContent = 'Šaljem…';
+    setBusy(btn, true, 'Šaljem…');
     const data = {
       fullName: form.fullName.value.trim(),
       dob: form.dob.value,
@@ -160,14 +177,13 @@ function setupEnrollForm() {
       otherSchool: form.program.value === 'teorija' ? form.otherSchool.value.trim() : '',
     };
     try {
-      await submitEnrollment(data);
+      await withTimeout(submitEnrollment(data));
       showEnrollSuccess(data, settings || await getSettings());
     } catch (err) {
       console.error(err);
       status.dataset.type = 'error';
       status.textContent = `Prijava nije poslana. Pokušajte ponovo ili nas nazovite na ${phone()}.`;
-      btn.disabled = false;
-      btn.textContent = 'Pošalji prijavu';
+      setBusy(btn, false, 'Pošalji prijavu');
     }
   });
 
@@ -193,24 +209,50 @@ function showEnrollSuccess(data, s) {
 
 function setupContactForm() {
   const form = document.getElementById('contact-form');
+  const fields = form.querySelector('.contact-fields');
+  const success = document.getElementById('contact-success');
+  const status = document.getElementById('contact-status');
+  const btn = fields.querySelector('button[type="submit"]');
+  const input = (name) => form.elements.namedItem(name);
+  const phone = () => settings?.phone || document.querySelector('[data-setting="phone"]').textContent;
   attachLiveValidation(form);
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    status.textContent = '';
     if (!validateForm(form)) return;
-    if (!firebaseReady) { toast('Slanje poruka trenutno nije dostupno. Nazovite nas.', 'error'); return; }
-    const btn = form.querySelector('button');
-    btn.disabled = true;
+    if (!firebaseReady) {
+      status.dataset.type = 'error';
+      status.textContent = `Slanje poruka trenutno nije dostupno. Nazovite nas na ${phone()}.`;
+      return;
+    }
+    const data = {
+      name: input('name').value.trim(),
+      contact: input('contact').value.trim(),
+      message: input('message').value.trim(),
+    };
+    setBusy(btn, true, 'Šaljem…');
     try {
-      await submitMessage({
-        name: form.name.value.trim(), contact: form.contact.value.trim(), message: form.message.value.trim(),
-      });
+      await withTimeout(submitMessage(data));
+      document.getElementById('contact-success-name').textContent = data.name;
+      document.getElementById('contact-success-contact').textContent = data.contact;
+      injectIcons(success);
+      fields.hidden = true;
+      success.hidden = false;
+      success.focus();
       form.reset();
-      toast('Poruka je poslana. Hvala!', 'success');
     } catch (err) {
       console.error(err);
-      toast('Poruka nije poslana. Pokušajte ponovo.', 'error');
+      status.dataset.type = 'error';
+      status.textContent = `Poruka nije poslana. Provjerite internet vezu i pokušajte ponovo ili nas nazovite na ${phone()}.`;
     } finally {
-      btn.disabled = false;
+      setBusy(btn, false, 'Pošalji poruku');
     }
+  });
+
+  document.getElementById('contact-again').addEventListener('click', () => {
+    success.hidden = true;
+    fields.hidden = false;
+    input('name').focus();
   });
 }

@@ -4,7 +4,7 @@ import {
 import { signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from 'firebase/auth';
 import { firebaseReady } from '../lib/firebase.js';
 import { db, auth } from '../lib/admin-firebase.js';
-import { DEFAULTS, DEFAULT_SETTINGS, EXAM_TYPES, PROGRAMS, todayISO } from '../lib/defaults.js';
+import { DEFAULTS, DEFAULT_SETTINGS, EXAM_TYPES, PROGRAMS, WEEKDAYS, CLASS_LOCATIONS, sortList, todayISO } from '../lib/defaults.js';
 import { logoSVG, icon, esc, toast, formatDate } from '../lib/ui.js';
 
 /* ==========================================================================
@@ -22,7 +22,6 @@ const STATUSES = {
 };
 
 const CATEGORY_CODES = ['AM', 'A1', 'A2', 'A', 'B1', 'B', 'BE', 'C1', 'C1E', 'C', 'CE', 'D1', 'D1E', 'D', 'DE', 'T'];
-const DAYS = ['Ponedjeljak', 'Utorak', 'Srijeda', 'Četvrtak', 'Petak', 'Subota', 'Nedjelja', 'Pon – Pet', 'Pon – Sub'];
 
 /* Kolekcije koje se uređuju kroz istu tabelu + formu */
 const COLLECTIONS = {
@@ -48,21 +47,17 @@ const COLLECTIONS = {
   },
   classSchedule: {
     title: 'Termini časova', icon: 'clock', single: 'termin',
-    hint: 'Raspored časova na početnoj stranici (sekcija „Termini časova“). Redoslijed određuje polje „Redni broj“.',
+    hint: 'Raspored časova na početnoj stranici (sekcija „Termini časova“). Termini se sami poredaju po danu i satu.',
+    sortAll: (rows) => sortList('classSchedule', rows),
     fields: [
-      { key: 'day', label: 'Dan', type: 'text', list: DAYS, required: true },
-      { key: 'time', label: 'Vrijeme', type: 'text', placeholder: 'npr. 17:00 – 18:30', required: true },
-      { key: 'title', label: 'Vrsta nastave', type: 'text', list: ['Teorijska nastava', 'Praktična nastava', 'Prva pomoć'], required: true },
-      { key: 'note', label: 'Opis / napomena', type: 'text' },
-      { key: 'category', label: 'Kategorija (oznaka)', type: 'text', placeholder: 'npr. B ili Sve kat.' },
-      { key: 'order', label: 'Redni broj', type: 'number' },
+      { key: 'location', label: 'Lokacija', type: 'select', options: CLASS_LOCATIONS, placeholder: 'Odaberite lokaciju', required: true },
+      { key: 'day', label: 'Dan u sedmici', type: 'select', options: Object.fromEntries(WEEKDAYS.map((d) => [d, d])), placeholder: 'Odaberite dan', required: true },
+      { key: 'time', label: 'Termin (od – do)', type: 'timerange', required: true },
     ],
     columns: [
-      { key: 'order', label: '#' },
       { key: 'day', label: 'Dan', render: (r) => `<strong>${esc(r.day)}</strong>` },
-      { key: 'time', label: 'Vrijeme' },
-      { key: 'title', label: 'Nastava' },
-      { key: 'note', label: 'Napomena' },
+      { key: 'time', label: 'Termin' },
+      { key: 'location', label: 'Lokacija', render: (r) => esc(CLASS_LOCATIONS[r.location] || r.location || r.title || '') },
     ],
   },
   services: {
@@ -494,7 +489,8 @@ function renderCollection(name) {
 
   tabUnsub = onSnapshot(collection(db, name), (snap) => {
     collectionRows = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-    collectionRows.sort(cfg.sort || ((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0)));
+    if (cfg.sortAll) collectionRows = cfg.sortAll(collectionRows);
+    else collectionRows.sort(cfg.sort || ((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0)));
     const body = document.getElementById('col-body');
     if (!body) return;
 
@@ -567,7 +563,18 @@ function fieldHTML(f, value) {
   const v = value ?? '';
   let control;
   if (f.type === 'select') {
-    control = `<select class="select" id="${id}" name="${f.key}"${req}>${Object.entries(f.options).map(([k, l]) => `<option value="${esc(k)}"${String(v) === k ? ' selected' : ''}>${esc(l)}</option>`).join('')}</select>`;
+    const empty = f.placeholder ? `<option value=""${v ? '' : ' selected'} disabled>${esc(f.placeholder)}</option>` : '';
+    control = `<select class="select" id="${id}" name="${f.key}"${req}>${empty}${Object.entries(f.options).map(([k, l]) => `<option value="${esc(k)}"${String(v) === k ? ' selected' : ''}>${esc(l)}</option>`).join('')}</select>`;
+  } else if (f.type === 'timerange') {
+    // Jedno polje za termin: početak i kraj časa, sprema se kao „17:00 – 18:30“
+    const [from = '', to = ''] = String(v).split(/\s*[–-]\s*/);
+    return `<div class="field"><span class="label" id="${id}-label">${esc(f.label)}${f.required ? ' <span class="req">*</span>' : ''}</span>
+      <div class="timerange" role="group" aria-labelledby="${id}-label">
+        <input class="input" id="${id}" name="${f.key}_from" type="time" value="${esc(from)}" aria-label="Od"${req} />
+        <span aria-hidden="true">–</span>
+        <input class="input" name="${f.key}_to" type="time" value="${esc(to)}" aria-label="Do"${req} />
+      </div>
+      <p class="field-error">Unesite početak i kraj časa (kraj mora biti poslije početka).</p></div>`;
   } else if (f.type === 'textarea' || f.type === 'lines') {
     const text = Array.isArray(v) ? v.join('\n') : v;
     control = `<textarea class="textarea" id="${id}" name="${f.key}" rows="${f.type === 'lines' ? 4 : 3}"${req}>${esc(text)}</textarea>`;
@@ -581,6 +588,9 @@ function fieldHTML(f, value) {
 }
 
 function readField(form, f) {
+  if (f.type === 'timerange') {
+    return `${form.elements[`${f.key}_from`].value} – ${form.elements[`${f.key}_to`].value}`;
+  }
   const el = form.elements[f.key];
   const raw = el.value.trim();
   if (f.type === 'number') return raw === '' ? 0 : Number(raw);
@@ -593,14 +603,23 @@ function openEditor(name, item = null) {
   const editing = item && item.id;
   const form = document.getElementById('edit-form');
   document.getElementById('edit-title').textContent = editing ? `Uredi ${cfg.single}` : `Novi ${cfg.single}`;
-  const defaults = name === 'examDates' ? { type: 'teorija', time: '09:00' } : { order: (collectionRows.length || 0) + 1 };
+  const defaults = { examDates: { type: 'teorija', time: '09:00' }, classSchedule: {} }[name] || { order: (collectionRows.length || 0) + 1 };
   document.getElementById('edit-fields').innerHTML = cfg.fields.map((f) => fieldHTML(f, item ? item[f.key] : defaults[f.key])).join('');
   form.onsubmit = async (e) => {
     e.preventDefault();
     let ok = true;
     cfg.fields.forEach((f) => {
-      const el = form.elements[f.key];
-      const bad = f.required && !el.value.trim();
+      let el;
+      let bad;
+      if (f.type === 'timerange') {
+        const from = form.elements[`${f.key}_from`];
+        const to = form.elements[`${f.key}_to`];
+        bad = !from.value || !to.value || to.value <= from.value;
+        el = !from.value ? from : to;
+      } else {
+        el = form.elements[f.key];
+        bad = f.required && !el.value.trim();
+      }
       el.closest('.field').classList.toggle('has-error', bad);
       if (bad && ok) { el.focus(); ok = false; }
     });
@@ -609,7 +628,8 @@ function openEditor(name, item = null) {
     const btn = form.querySelector('[type="submit"]');
     btn.disabled = true;
     try {
-      if (editing) await updateDoc(doc(db, name, item.id), data);
+      // Uređivanje zamjenjuje cijeli dokument, da ne ostanu stara polja (npr. raniji format termina)
+      if (editing) await setDoc(doc(db, name, item.id), data);
       else await addDoc(collection(db, name), data);
       dialog.close();
       toast('Sačuvano.', 'success');

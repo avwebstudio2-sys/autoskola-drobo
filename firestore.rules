@@ -66,7 +66,7 @@ service cloud.firestore {
       allow create: if request.resource.data.keys().hasOnly(['name', 'contact', 'message', 'createdAt', 'read'])
         && str(request.resource.data.name, 2, 120)
         && str(request.resource.data.contact, 5, 120)
-        && str(request.resource.data.message, 5, 2000)
+        && str(request.resource.data.message, 2, 2000)
         && request.resource.data.read == false
         && request.resource.data.createdAt == request.time;
       allow read, update, delete: if isAdmin();

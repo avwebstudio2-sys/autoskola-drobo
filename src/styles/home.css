@@ -552,6 +552,16 @@
   filter: grayscale(0.4) contrast(1.05);
 }
 .contact-form { align-content: start; }
+.contact-success { display: grid; gap: 12px; justify-items: start; outline: none; }
+.contact-success-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.6rem;
+  text-transform: uppercase;
+  color: var(--paper);
+}
+.contact-success p { color: var(--muted-on-dark); }
+.contact-success strong { color: var(--paper); }
 .contact-form .form-title { font-size: 1.6rem; }
 .contact-form label { color: var(--paper); }
 @media (max-width: 1080px) {

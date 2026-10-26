@@ -256,22 +256,31 @@
           </div>
           <form class="card card--dark contact-form form-grid" id="contact-form" novalidate data-reveal="2">
             <h3 class="form-title">Pošalji poruku</h3>
-            <div class="field">
-              <label for="c-name">Ime</label>
-              <input class="input input--dark" id="c-name" name="name" required minlength="2" maxlength="120" autocomplete="name" />
-              <p class="field-error">Upišite ime.</p>
+            <div class="contact-fields form-grid">
+              <div class="field">
+                <label for="c-name">Ime</label>
+                <input class="input input--dark" id="c-name" name="name" required minlength="2" maxlength="120" autocomplete="name" aria-describedby="c-name-err" />
+                <p class="field-error" id="c-name-err">Upišite ime (najmanje 2 slova).</p>
+              </div>
+              <div class="field">
+                <label for="c-contact">Telefon ili e-mail</label>
+                <input class="input input--dark" id="c-contact" name="contact" required minlength="5" maxlength="120" autocomplete="tel" data-validate="contact" aria-describedby="c-contact-err" />
+                <p class="field-error" id="c-contact-err">Upišite broj telefona ili e-mail adresu.</p>
+              </div>
+              <div class="field">
+                <label for="c-message">Poruka</label>
+                <textarea class="textarea textarea--dark" id="c-message" name="message" required minlength="2" maxlength="2000" aria-describedby="c-message-err"></textarea>
+                <p class="field-error" id="c-message-err">Napišite poruku.</p>
+              </div>
+              <button class="btn btn-primary" type="submit">Pošalji poruku</button>
+              <p class="form-status" id="contact-status" role="status" aria-live="polite"></p>
             </div>
-            <div class="field">
-              <label for="c-contact">Telefon ili e-mail</label>
-              <input class="input input--dark" id="c-contact" name="contact" required minlength="5" maxlength="120" />
-              <p class="field-error">Upišite telefon ili e-mail.</p>
+            <div class="contact-success" id="contact-success" hidden tabindex="-1">
+              <span class="success-badge" data-icon="check"></span>
+              <p class="contact-success-title">Poruka je poslana!</p>
+              <p>Hvala, <strong id="contact-success-name"></strong>. Odgovorićemo vam što prije na <strong id="contact-success-contact"></strong>.</p>
+              <button class="btn btn-ghost btn-sm" type="button" id="contact-again">Pošalji novu poruku</button>
             </div>
-            <div class="field">
-              <label for="c-message">Poruka</label>
-              <textarea class="textarea textarea--dark" id="c-message" name="message" required minlength="5" maxlength="2000"></textarea>
-              <p class="field-error">Napišite poruku.</p>
-            </div>
-            <button class="btn btn-primary" type="submit">Pošalji poruku</button>
           </form>
         </div>
       </div>

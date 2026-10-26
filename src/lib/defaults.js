@@ -76,8 +76,23 @@ export function todayISO() {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
 
+/* Termini časova: admin bira dan i lokaciju iz ovih lista */
+export const WEEKDAYS = ['Ponedjeljak', 'Utorak', 'Srijeda', 'Četvrtak', 'Petak', 'Subota', 'Nedjelja'];
+export const CLASS_LOCATIONS = {
+  ucionica: 'Učionica autoškole',
+  crveni_kriz: 'Crveni križ Travnik',
+};
+
+const dayIndex = (day) => {
+  const i = WEEKDAYS.indexOf(day);
+  return i === -1 ? WEEKDAYS.length : i;
+};
+
 const sorters = {
   examDates: (a, b) => `${a.date} ${a.time || ''}`.localeCompare(`${b.date} ${b.time || ''}`),
+  classSchedule: (a, b) => dayIndex(a.day) - dayIndex(b.day)
+    || String(a.time || '').localeCompare(String(b.time || ''))
+    || (Number(a.order) || 0) - (Number(b.order) || 0),
   default: (a, b) => (Number(a.order) || 0) - (Number(b.order) || 0),
 };
 

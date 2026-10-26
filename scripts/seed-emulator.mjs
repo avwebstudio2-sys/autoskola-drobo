@@ -56,10 +56,9 @@ const uid = await ensureAdmin();
 console.log('Administrator:', ADMIN.email, uid);
 
 const schedule = [
-  { day: 'Ponedjeljak', time: '17:00 – 18:30', title: 'Teorijska nastava', note: 'Saobraćajni propisi i znakovi', category: 'Sve kat.', order: 1 },
-  { day: 'Srijeda', time: '17:00 – 18:30', title: 'Teorijska nastava', note: 'Raskrsnice i prvenstvo prolaza', category: 'Sve kat.', order: 2 },
-  { day: 'Petak', time: '16:00 – 17:30', title: 'Prva pomoć', note: 'Priprema za ispit iz prve pomoći', category: '', order: 3 },
-  { day: 'Pon – Sub', time: 'Po dogovoru', title: 'Praktična nastava', note: 'Termin dogovarate sa instruktorom', category: 'Sve kat.', order: 4 },
+  { location: 'ucionica', day: 'Ponedjeljak', time: '17:00 – 18:30' },
+  { location: 'ucionica', day: 'Srijeda', time: '17:00 – 18:30' },
+  { location: 'crveni_kriz', day: 'Petak', time: '16:00 – 17:30' },
 ];
 for (const [i, row] of schedule.entries()) await put(`classSchedule/primjer-${i + 1}`, row);
 

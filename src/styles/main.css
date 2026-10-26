@@ -543,7 +543,12 @@ ul { margin: 0; padding: 0; list-style: none; }
 .check input { width: 22px; height: 22px; margin-top: 2px; accent-color: var(--red); flex: none; }
 
 .form-status { font-weight: 600; }
+.form-status:empty { display: none; }
 .form-status[data-type='error'] { color: var(--red-hover); }
+/* Na tamnim karticama tamnocrvena nije čitljiva */
+.card--dark .field-error, .card--dark .form-status[data-type='error'] { color: #ff8a8d; }
+.card--dark .field.has-error .input, .card--dark .field.has-error .textarea { border-color: #ff6b6f; }
+.btn[aria-busy='true'] { cursor: progress; }
 
 /* ---------- Toast ---------- */
 

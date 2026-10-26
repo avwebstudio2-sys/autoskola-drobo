@@ -374,6 +374,10 @@ code {
 }
 .dialog-foot .btn-ghost { color: var(--text-on-light); }
 
+/* Termin časa: od – do u jednom polju */
+.timerange { display: flex; align-items: center; gap: 10px; }
+.timerange .input { flex: 1; min-width: 0; }
+
 /* Postavke */
 .settings-form { max-width: 820px; }
 .settings-group .form-grid { gap: 16px; }
