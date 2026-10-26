@@ -5,7 +5,7 @@ import { signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordRe
 import { firebaseReady } from '../lib/firebase.js';
 import { db, auth } from '../lib/admin-firebase.js';
 import { DEFAULTS, DEFAULT_SETTINGS, EXAM_TYPES, PROGRAMS, WEEKDAYS, CLASS_LOCATIONS, CLASS_TYPES, sortList, todayISO } from '../lib/defaults.js';
-import { logoSVG, icon, esc, toast, formatDate } from '../lib/ui.js';
+import { logoSVG, icon, esc, toast, formatDate, confirmDialog } from '../lib/ui.js';
 import { initCustomSelects } from '../lib/select.js';
 
 /* ==========================================================================
@@ -453,7 +453,7 @@ function renderEnrollments() {
   }));
   main.querySelectorAll('[data-del]').forEach((b) => b.addEventListener('click', async () => {
     const e = live.enrollments.find((x) => x.id === b.dataset.del);
-    if (!confirm(`Obrisati prijavu: ${e?.fullName}?`)) return;
+    if (!await confirmDialog({ title: 'Obrisati prijavu?', text: e?.fullName || '', confirmLabel: 'Obriši', danger: true })) return;
     try { await deleteDoc(doc(db, 'enrollments', b.dataset.del)); toast('Prijava je obrisana.'); } catch (err) { console.error(err); toast('Brisanje nije uspjelo.', 'error'); }
   }));
   main.querySelector('#csv-btn').addEventListener('click', () => exportCsv(rows));
@@ -498,8 +498,8 @@ function renderMessages() {
     const m = live.messages.find((x) => x.id === b.dataset.read);
     updateDoc(doc(db, 'messages', m.id), { read: !m.read }).catch(() => toast('Greška.', 'error'));
   }));
-  main.querySelectorAll('[data-del]').forEach((b) => b.addEventListener('click', () => {
-    if (!confirm('Obrisati poruku?')) return;
+  main.querySelectorAll('[data-del]').forEach((b) => b.addEventListener('click', async () => {
+    if (!await confirmDialog({ title: 'Obrisati poruku?', confirmLabel: 'Obriši', danger: true })) return;
     deleteDoc(doc(db, 'messages', b.dataset.del)).then(() => toast('Poruka je obrisana.')).catch(() => toast('Greška.', 'error'));
   }));
 }
@@ -542,7 +542,7 @@ function renderCollection(name) {
       openEditor(name, rest);
     }));
     body.querySelectorAll('[data-del]').forEach((b) => b.addEventListener('click', async () => {
-      if (!confirm('Obrisati ovu stavku?')) return;
+      if (!await confirmDialog({ title: 'Obrisati ovu stavku?', confirmLabel: 'Obriši', danger: true })) return;
       try { await deleteDoc(doc(db, name, b.dataset.del)); toast('Obrisano.'); } catch (err) { console.error(err); toast('Brisanje nije uspjelo.', 'error'); }
     }));
   }, (err) => {

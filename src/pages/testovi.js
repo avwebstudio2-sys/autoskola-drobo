@@ -1,4 +1,4 @@
-import { renderHeader, renderFooter, icon, esc, toast } from '../lib/ui.js';
+import { renderHeader, renderFooter, icon, esc, toast, confirmDialog } from '../lib/ui.js';
 import { getSettings } from '../lib/content.js';
 import { SETS, questionsForSet, quizHubHTML, EXAM_MAX_POINTS, passPoints, passText } from '../lib/render.js';
 
@@ -283,9 +283,17 @@ function createRunner(cfg) {
     else confirmFinish();
   }
 
-  function confirmFinish() {
+  async function confirmFinish() {
     const unanswered = state.selected.filter((s) => !s.size).length;
-    if (unanswered && !confirm(`Niste odgovorili na ${unanswered} pitanja. Završiti test?`)) return;
+    if (unanswered) {
+      const ok = await confirmDialog({
+        title: 'Završiti test?',
+        text: `Niste odgovorili na ${unanswered} ${unanswered % 10 === 1 && unanswered % 100 !== 11 ? 'pitanje' : 'pitanja'}. Neodgovorena pitanja se računaju kao netačna.`,
+        confirmLabel: 'Završi test',
+        cancelLabel: 'Nastavi test',
+      });
+      if (!ok || state.finished) return;
+    }
     finish();
   }
 
