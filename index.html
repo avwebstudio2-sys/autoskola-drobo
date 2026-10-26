@@ -175,8 +175,9 @@
             <div class="form-row">
               <div class="field">
                 <label for="f-dob">Datum rođenja <span class="req" aria-hidden="true">*</span></label>
-                <!-- Bez "dd.mm.gggg": polje je tekstualno s opisom, a pri dodiru postaje biranje datuma (home.js) -->
-                <input class="input" id="f-dob" name="dob" type="text" data-date autocomplete="bday" placeholder="Odaberite datum rođenja" required aria-describedby="f-dob-err" />
+                <!-- Vlastiti kalendar (src/lib/datepicker.js): prikaz riječima, vrijednost GGGG-MM-DD u skrivenom polju "dob" -->
+                <input class="input" id="f-dob" type="text" data-datepicker data-target="f-dob-value" data-min-age="14" data-max-age="100" data-start="year" placeholder="Odaberite datum rođenja" required aria-describedby="f-dob-err" />
+                <input type="hidden" id="f-dob-value" name="dob" />
                 <p class="field-error" id="f-dob-err">Unesite ispravan datum rođenja.</p>
               </div>
               <div class="field">

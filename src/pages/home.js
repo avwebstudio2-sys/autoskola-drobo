@@ -7,6 +7,7 @@ import {
 import { firebaseReady } from '../lib/firebase.js';
 import { initHero } from '../lib/hero.js';
 import { initCustomSelects } from '../lib/select.js';
+import { initDatePickers } from '../lib/datepicker.js';
 
 /*
  * Sav sadržaj je već upisan u HTML pri buildu (scripts/prerender-plugin.mjs).
@@ -117,23 +118,6 @@ function validateField(el) {
   return setError(el, false);
 }
 
-/* ---------- Datum rođenja: tekst umjesto formata ---------- */
-
-/* Polje za datum prikazuje opis („Odaberite datum rođenja“) umjesto formata preglednika:
-   dok je prazno, tekstualno je; pri fokusu postaje biranje datuma, a prazno se vraća na tekst. */
-function setupDateInputs(form) {
-  form.querySelectorAll('input[data-date]').forEach((el) => {
-    el.addEventListener('focus', () => {
-      if (el.type === 'date') return;
-      el.type = 'date';
-      el.max = new Date().toISOString().slice(0, 10);
-      try { el.showPicker?.(); } catch { /* neki preglednici dozvoljavaju samo na klik */ }
-    });
-    el.addEventListener('blur', () => { if (!el.value) el.type = 'text'; });
-  });
-  form.addEventListener('reset', () => setTimeout(() => form.querySelectorAll('input[data-date]').forEach((el) => { el.type = 'text'; })));
-}
-
 function attachLiveValidation(form) {
   form.querySelectorAll('input, textarea, select').forEach((el) => {
     el.addEventListener('blur', () => { if (el.value || el.type === 'checkbox') validateField(el); });
@@ -167,7 +151,7 @@ function setBusy(btn, busy, label) {
 
 function setupEnrollForm() {
   const form = document.getElementById('enroll-form');
-  setupDateInputs(form);
+  initDatePickers(form);
   const phone = () => settings?.phone || document.querySelector('[data-setting="phone"]').textContent;
   const schoolField = document.getElementById('other-school-field');
   form.querySelectorAll('input[name="program"]').forEach((r) => r.addEventListener('change', () => {
