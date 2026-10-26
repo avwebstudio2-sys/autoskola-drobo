@@ -4,7 +4,7 @@ import {
 import { signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from 'firebase/auth';
 import { firebaseReady } from '../lib/firebase.js';
 import { db, auth } from '../lib/admin-firebase.js';
-import { DEFAULTS, DEFAULT_SETTINGS, EXAM_TYPES, PROGRAMS, WEEKDAYS, CLASS_LOCATIONS, sortList, todayISO } from '../lib/defaults.js';
+import { DEFAULTS, DEFAULT_SETTINGS, EXAM_TYPES, PROGRAMS, WEEKDAYS, CLASS_LOCATIONS, CLASS_TYPES, sortList, todayISO } from '../lib/defaults.js';
 import { logoSVG, icon, esc, toast, formatDate } from '../lib/ui.js';
 
 /* ==========================================================================
@@ -33,7 +33,7 @@ const COLLECTIONS = {
       { key: 'type', label: 'Vrsta ispita', type: 'select', options: EXAM_TYPES, required: true },
       { key: 'category', label: 'Kategorija', type: 'text', list: CATEGORY_CODES, placeholder: 'npr. B ili A, C, D (prazno = sve)' },
       { key: 'date', label: 'Datum', type: 'date', required: true },
-      { key: 'time', label: 'Vrijeme', type: 'time' },
+      { key: 'time', label: 'Vrijeme', type: 'time24' },
       { key: 'location', label: 'Lokacija', type: 'text', placeholder: 'npr. MUP SBK, Travnik' },
       { key: 'note', label: 'Napomena', type: 'text' },
     ],
@@ -50,6 +50,7 @@ const COLLECTIONS = {
     hint: 'Raspored časova na početnoj stranici (sekcija „Termini časova“). Termini se sami poredaju po danu i satu.',
     sortAll: (rows) => sortList('classSchedule', rows),
     fields: [
+      { key: 'type', label: 'Vrsta nastave', type: 'select', options: CLASS_TYPES, placeholder: 'Odaberite vrstu nastave', required: true },
       { key: 'location', label: 'Lokacija', type: 'select', options: CLASS_LOCATIONS, placeholder: 'Odaberite lokaciju', required: true },
       { key: 'day', label: 'Dan u sedmici', type: 'select', options: Object.fromEntries(WEEKDAYS.map((d) => [d, d])), placeholder: 'Odaberite dan', required: true },
       { key: 'time', label: 'Termin (od – do)', type: 'timerange', required: true },
@@ -57,7 +58,8 @@ const COLLECTIONS = {
     columns: [
       { key: 'day', label: 'Dan', render: (r) => `<strong>${esc(r.day)}</strong>` },
       { key: 'time', label: 'Termin' },
-      { key: 'location', label: 'Lokacija', render: (r) => esc(CLASS_LOCATIONS[r.location] || r.location || r.title || '') },
+      { key: 'type', label: 'Nastava', render: (r) => esc(CLASS_TYPES[r.type] || r.type || r.title || '') },
+      { key: 'location', label: 'Lokacija', render: (r) => esc(CLASS_LOCATIONS[r.location] || r.location || '') },
     ],
   },
   services: {
@@ -557,6 +559,27 @@ async function seedDefaults(name) {
 
 /* ---------- Forma za uređivanje ---------- */
 
+/* Vrijeme uvijek u 24-satnom formatu (preglednikovo polje za vrijeme zna prikazati AM/PM).
+   Prihvata „17“, „1730“, „17.30“ ili „17:30“ i pretvara u „17:30“. */
+function normalizeTime(value) {
+  const m = String(value).trim().match(/^(\d{1,2})(?:[:.,\s]?(\d{2}))?$/);
+  if (!m) return null;
+  const h = Number(m[1]);
+  const min = Number(m[2] || 0);
+  if (h > 23 || min > 59) return null;
+  return `${String(h).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
+}
+
+const TIME_SUGGESTIONS = Array.from({ length: (21 - 7) * 4 + 1 }, (_, i) => {
+  const minutes = 7 * 60 + i * 15;
+  return `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`;
+});
+
+function timeInputHTML({ id, name, value, label, required, placeholder = '17:00' }) {
+  return `<input class="input input-time" ${id ? `id="${id}" ` : ''}name="${name}" type="text" inputmode="numeric" autocomplete="off" maxlength="5"
+    placeholder="${placeholder}" value="${esc(value)}" list="time-suggestions" data-time${label ? ` aria-label="${label}"` : ''}${required ? ' required' : ''} />`;
+}
+
 function fieldHTML(f, value) {
   const id = `fld-${f.key}`;
   const req = f.required ? ' required' : '';
@@ -570,11 +593,14 @@ function fieldHTML(f, value) {
     const [from = '', to = ''] = String(v).split(/\s*[–-]\s*/);
     return `<div class="field"><span class="label" id="${id}-label">${esc(f.label)}${f.required ? ' <span class="req">*</span>' : ''}</span>
       <div class="timerange" role="group" aria-labelledby="${id}-label">
-        <input class="input" id="${id}" name="${f.key}_from" type="time" value="${esc(from)}" aria-label="Od"${req} />
+        ${timeInputHTML({ id, name: `${f.key}_from`, value: from, label: 'Od', required: f.required, placeholder: '17:00' })}
         <span aria-hidden="true">–</span>
-        <input class="input" name="${f.key}_to" type="time" value="${esc(to)}" aria-label="Do"${req} />
+        ${timeInputHTML({ name: `${f.key}_to`, value: to, label: 'Do', required: f.required, placeholder: '18:30' })}
       </div>
-      <p class="field-error">Unesite početak i kraj časa (kraj mora biti poslije početka).</p></div>`;
+      <p class="hint">24-satni format, npr. 17:00 – 18:30</p>
+      <p class="field-error">Unesite početak i kraj časa u formatu 17:00 (kraj mora biti poslije početka).</p></div>`;
+  } else if (f.type === 'time24') {
+    control = timeInputHTML({ id, name: f.key, value: v, required: f.required, placeholder: '09:00' });
   } else if (f.type === 'textarea' || f.type === 'lines') {
     const text = Array.isArray(v) ? v.join('\n') : v;
     control = `<textarea class="textarea" id="${id}" name="${f.key}" rows="${f.type === 'lines' ? 4 : 3}"${req}>${esc(text)}</textarea>`;
@@ -584,13 +610,15 @@ function fieldHTML(f, value) {
     control = `<input class="input" id="${id}" name="${f.key}" type="${f.type}" value="${esc(v)}"${f.placeholder ? ` placeholder="${esc(f.placeholder)}"` : ''}${list}${minmax}${req} />`
       + (f.list ? `<datalist id="${id}-list">${f.list.map((o) => `<option value="${esc(o)}"></option>`).join('')}</datalist>` : '');
   }
-  return `<div class="field"><label for="${id}">${esc(f.label)}${f.required ? ' <span class="req">*</span>' : ''}</label>${control}${f.hint ? `<p class="hint">${esc(f.hint)}</p>` : ''}<p class="field-error">Obavezno polje.</p></div>`;
+  const error = f.type === 'time24' ? 'Unesite vrijeme u formatu 09:00.' : 'Obavezno polje.';
+  return `<div class="field"><label for="${id}">${esc(f.label)}${f.required ? ' <span class="req">*</span>' : ''}</label>${control}${f.hint ? `<p class="hint">${esc(f.hint)}</p>` : ''}<p class="field-error">${error}</p></div>`;
 }
 
 function readField(form, f) {
   if (f.type === 'timerange') {
-    return `${form.elements[`${f.key}_from`].value} – ${form.elements[`${f.key}_to`].value}`;
+    return `${normalizeTime(form.elements[`${f.key}_from`].value)} – ${normalizeTime(form.elements[`${f.key}_to`].value)}`;
   }
+  if (f.type === 'time24') return normalizeTime(form.elements[f.key].value) || '';
   const el = form.elements[f.key];
   const raw = el.value.trim();
   if (f.type === 'number') return raw === '' ? 0 : Number(raw);
@@ -604,7 +632,13 @@ function openEditor(name, item = null) {
   const form = document.getElementById('edit-form');
   document.getElementById('edit-title').textContent = editing ? `Uredi ${cfg.single}` : `Novi ${cfg.single}`;
   const defaults = { examDates: { type: 'teorija', time: '09:00' }, classSchedule: {} }[name] || { order: (collectionRows.length || 0) + 1 };
-  document.getElementById('edit-fields').innerHTML = cfg.fields.map((f) => fieldHTML(f, item ? item[f.key] : defaults[f.key])).join('');
+  const fieldsBox = document.getElementById('edit-fields');
+  fieldsBox.innerHTML = cfg.fields.map((f) => fieldHTML(f, item ? item[f.key] : defaults[f.key])).join('')
+    + `<datalist id="time-suggestions">${TIME_SUGGESTIONS.map((t) => `<option value="${t}"></option>`).join('')}</datalist>`;
+  fieldsBox.querySelectorAll('[data-time]').forEach((input) => input.addEventListener('blur', () => {
+    const t = normalizeTime(input.value);
+    if (t) input.value = t;
+  }));
   form.onsubmit = async (e) => {
     e.preventDefault();
     let ok = true;
@@ -614,8 +648,14 @@ function openEditor(name, item = null) {
       if (f.type === 'timerange') {
         const from = form.elements[`${f.key}_from`];
         const to = form.elements[`${f.key}_to`];
-        bad = !from.value || !to.value || to.value <= from.value;
-        el = !from.value ? from : to;
+        const a = normalizeTime(from.value);
+        const b = normalizeTime(to.value);
+        bad = !a || !b || b <= a;
+        el = !a ? from : to;
+      } else if (f.type === 'time24') {
+        el = form.elements[f.key];
+        const raw = el.value.trim();
+        bad = (f.required && !raw) || (raw !== '' && !normalizeTime(raw));
       } else {
         el = form.elements[f.key];
         bad = f.required && !el.value.trim();

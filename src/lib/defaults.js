@@ -82,6 +82,10 @@ export const CLASS_LOCATIONS = {
   ucionica: 'Učionica autoškole',
   crveni_kriz: 'Crveni križ Travnik',
 };
+export const CLASS_TYPES = {
+  teorija: 'Teorijska nastava',
+  prva_pomoc: 'Prva pomoć',
+};
 
 const dayIndex = (day) => {
   const i = WEEKDAYS.indexOf(day);

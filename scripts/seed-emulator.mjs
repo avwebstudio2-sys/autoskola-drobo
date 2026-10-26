@@ -56,9 +56,9 @@ const uid = await ensureAdmin();
 console.log('Administrator:', ADMIN.email, uid);
 
 const schedule = [
-  { location: 'ucionica', day: 'Ponedjeljak', time: '17:00 – 18:30' },
-  { location: 'ucionica', day: 'Srijeda', time: '17:00 – 18:30' },
-  { location: 'crveni_kriz', day: 'Petak', time: '16:00 – 17:30' },
+  { type: 'teorija', location: 'ucionica', day: 'Ponedjeljak', time: '17:00 – 18:30' },
+  { type: 'teorija', location: 'ucionica', day: 'Srijeda', time: '17:00 – 18:30' },
+  { type: 'prva_pomoc', location: 'crveni_kriz', day: 'Petak', time: '16:00 – 17:30' },
 ];
 for (const [i, row] of schedule.entries()) await put(`classSchedule/primjer-${i + 1}`, row);
 

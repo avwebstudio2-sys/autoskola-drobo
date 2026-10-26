@@ -4,7 +4,7 @@
  * za pretraživače, i preglednik da ga osvježi podacima iz baze.
  */
 import { icon, esc, telHref, dayParts, formatDate, monthLabel } from './ui.js';
-import { EXAM_TYPES, CLASS_LOCATIONS } from './defaults.js';
+import { EXAM_TYPES, CLASS_LOCATIONS, CLASS_TYPES } from './defaults.js';
 
 /* ---------- Početna ---------- */
 
@@ -44,10 +44,12 @@ export function scheduleHTML(list) {
     return `<div class="empty-state">${icon('calendar', { size: 32 })}<p><strong>Raspored časova uskoro.</strong><br />Za termine nas nazovite.</p></div>`;
   }
   return `<div class="schedule">${list.map((r, i) => {
-    // Novi termini imaju lokaciju; stariji unosi (vrsta nastave + napomena) se i dalje prikazuju
-    const what = r.location
-      ? `<strong>${esc(CLASS_LOCATIONS[r.location] || r.location)}</strong>`
-      : `<strong>${esc(r.title)}</strong>${r.note ? `<span>${esc(r.note)}</span>` : ''}`;
+    // Termin: vrsta nastave + lokacija; stariji unosi (naslov + napomena) se i dalje prikazuju
+    const place = esc(CLASS_LOCATIONS[r.location] || r.location || '');
+    let what;
+    if (r.location && r.type) what = `<strong>${esc(CLASS_TYPES[r.type] || r.type)}</strong><span>${place}</span>`;
+    else if (r.location) what = `<strong>${place}</strong>`;
+    else what = `<strong>${esc(r.title)}</strong>${r.note ? `<span>${esc(r.note)}</span>` : ''}`;
     return `
     <div class="schedule-row" data-reveal="${i % 4}">
       <span class="schedule-day">${esc(r.day)}</span>
