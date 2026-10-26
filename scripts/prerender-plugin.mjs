@@ -27,7 +27,7 @@ const PAGES = {
   testovi: { path: '/testovi', priority: '0.9' },
   ispiti: { path: '/ispiti', priority: '0.8' },
 };
-const OG_IMAGE = { path: '/img/og-image.jpg', width: 1200, height: 630, alt: 'Autoškola Edukacija – Drobo, Travnik: Edukacija. Kandidat. Sigurnost.' };
+const OG_IMAGE = { path: '/img/og-image.jpg', width: 1200, height: 630, alt: 'Auto autoškole Edukacija – Drobo na cesti u zalazak sunca, Travnik: Edukacija. Kandidat. Sigurnost.' };
 
 /* ---------- Firestore (REST, javno čitanje) ---------- */
 

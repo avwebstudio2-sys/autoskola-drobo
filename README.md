@@ -93,16 +93,24 @@ Slike se spremaju kao WebP (najviše 900 px širine), a njihova širina i visina
 
 Skripta prijavljuje svako pitanje kod kojeg nije prepoznala tačan odgovor ili sliku.
 
-## Hero video (Google Flow)
+## Hero animacija (video na skrol)
 
-Dok video ne postoji, hero crta animiranu cestu iz loga (canvas). Kad Flow video bude gotov:
+Hero prikazuje video vožnje (auto autoškole) koji se premotava skrolom. Video je pretvoren u niz WebP kadrova koji se crtaju na canvas (`src/lib/hero.js`), jer je to glatko u svim preglednicima, za razliku od premotavanja `<video>` elementa.
+
+- `public/hero-frames/d/` – svih 240 kadrova, 1280 px (desktop, oko 5,1 MB)
+- `public/hero-frames/m/` – 120 kadrova, 960 px (telefon, oko 1,6 MB)
+- Kadrovi se učitavaju postepeno (prvo svaki 32., pa sve gušće) nakon što se stranica učita.
+- Na desktopu tekst prelazi desno kad auto skrene lijevo (`data-side="right"` na `.hero-stage`), a kadar se blago pomjeri da auto ostane lijevo.
+- Na uspravnom ekranu (telefon) video je traka na dnu, a iznad nje nebo u boji vrha kadra, iza teksta.
+
+Novi video:
 
 ```bash
 pip install imageio-ffmpeg
-python scripts/prepare_hero_video.py putanja/do/flow-videa.mp4
+python scripts/prepare_hero_frames.py putanja/do/videa.mp4
 ```
 
-Skripta pravi `public/video/hero.mp4`, `hero-mobile.mp4` i `hero-poster.jpg` sa svakim frejmom kao ključnim, za glatko premotavanje skrolom. Zatim u `index.html` na `<video class="hero-video">` dodajte `data-src="/video/hero.mp4" data-src-mobile="/video/hero-mobile.mp4"`. Bez tih atributa stranica ne pokušava učitati video.
+Zatim u `index.html` na `<canvas class="hero-canvas">` upišite broj kadrova (`data-frames`, `data-frames-mobile`). Ako se kretanje auta promijeni, prilagodite trenutke smjene teksta (`STAGES`, `SIDE_SWITCH`) u `src/lib/hero.js`.
 
 ## SEO
 
@@ -111,7 +119,7 @@ Skripta pravi `public/video/hero.mp4`, `hero-mobile.mp4` i `hero-poster.jpg` sa 
 - **Meta oznake** (canonical, Open Graph, Twitter) i **JSON-LD** (`LocalBusiness`, `FAQPage`) pravi isti plugin. Title i description su upisani u svaki HTML fajl.
 - **Adresa sajta** za canonical, `og:url`, `robots.txt` i `sitemap.xml`: Netlify je sam postavlja (varijabla `URL`, uvijek glavna domena). Lokalno se koristi `https://autoskola-drobo.netlify.app`, a može se pregaziti varijablom `SITE_URL`.
 - **`robots.txt` i `sitemap.xml`** nastaju pri buildu u `dist/`, pored `index.html`.
-- **Slike**: `public/img/hero-poster-1600.webp` i `hero-poster-mobile.webp` su prvi kadar animacije ceste (glavna slika, učitava se odmah), a `og-image.jpg` (1200×630) je slika za dijeljenje na društvenim mrežama. Obje su nacrtane istim kodom kao animacija (`createRoad` u `src/lib/hero.js`).
+- **Slike**: `public/img/hero-poster.webp` (prvi kadar videa) i `hero-poster-mobile.webp` (ista kompozicija kao animacija na telefonu) su glavna slika i učitavaju se odmah. `og-image.jpg` (1200×630) je slika za dijeljenje na društvenim mrežama: kadar s autom i slogan.
 
 ## Struktura
 

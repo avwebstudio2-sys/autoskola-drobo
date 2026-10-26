@@ -9,8 +9,8 @@
   <meta name="theme-color" content="#16171b" />
   <script>document.documentElement.classList.add('js')</script>
   <!--ssr:head-->
-  <link rel="preload" as="image" href="/img/hero-poster-1600.webp" type="image/webp" media="(min-width: 901px)" fetchpriority="high" />
-  <link rel="preload" as="image" href="/img/hero-poster-mobile.webp" type="image/webp" media="(max-width: 900px)" fetchpriority="high" />
+  <link rel="preload" as="image" href="/img/hero-poster.webp" type="image/webp" media="(min-width: 721px)" fetchpriority="high" />
+  <link rel="preload" as="image" href="/img/hero-poster-mobile.webp" type="image/webp" media="(max-width: 720px)" fetchpriority="high" />
   <link rel="icon" href="/img/favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -27,13 +27,14 @@
     <div class="hero-sticky">
       <div class="hero-media">
         <picture>
-          <source media="(max-width: 900px)" srcset="/img/hero-poster-mobile.webp" width="720" height="1280" />
-          <img class="hero-poster" src="/img/hero-poster-1600.webp" width="1600" height="900" fetchpriority="high" decoding="async"
-            alt="Ilustracija ceste s isprekidanom linijom u svitanje, motiv iz loga autoškole Edukacija – Drobo u Travniku" />
+          <source media="(max-width: 720px)" srcset="/img/hero-poster-mobile.webp" width="720" height="1280" />
+          <img class="hero-poster" src="/img/hero-poster.webp" width="1280" height="720" fetchpriority="high" decoding="async"
+            alt="Auto autoškole Edukacija – Drobo vozi praznom cestom u zalazak sunca kod Travnika" />
         </picture>
-        <canvas class="hero-canvas" aria-hidden="true"></canvas>
-        <!-- Flow video: dodajte data-src="/video/hero.mp4" i data-src-mobile="/video/hero-mobile.mp4" kad video postoji -->
-        <video class="hero-video" muted playsinline preload="auto" disablepictureinpicture aria-hidden="true"></video>
+        <!-- Kadrovi videa za premotavanje skrolom (scripts/prepare_hero_frames.py) -->
+        <canvas class="hero-canvas" aria-hidden="true"
+          data-frames="240" data-path="/hero-frames/d/" data-poster="/img/hero-poster.webp"
+          data-frames-mobile="120" data-path-mobile="/hero-frames/m/"></canvas>
       </div>
       <div class="hero-shade" aria-hidden="true"></div>
 
@@ -50,12 +51,12 @@
             <a class="btn btn-ghost btn-lg" href="#upis">Upiši se</a>
           </div>
         </div>
-        <div class="hero-stage" data-stage="1">
+        <div class="hero-stage" data-stage="1" data-side="right">
           <p class="eyebrow">Teorija i vožnja</p>
           <p class="hero-title display">Sve kategorije.<br /><span class="text-red">Jedan put.</span></p>
           <p class="hero-text">Od mopeda i automobila do kamiona, autobusa i traktora. Vodimo vas od prvog časa do položenog ispita.</p>
         </div>
-        <div class="hero-stage" data-stage="2">
+        <div class="hero-stage" data-stage="2" data-side="right">
           <p class="eyebrow">Online učenje</p>
           <p class="hero-title display"><span data-count="total">769</span> pitanja.<br /><span class="text-red">Spreman za ispit?</span></p>
           <p class="hero-text">Lekcije i simulacije ispita sa svim pitanjima iz zvaničnog kataloga, uključujući znakove, raskrsnice i prvu pomoć.</p>
