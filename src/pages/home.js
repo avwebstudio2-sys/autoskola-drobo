@@ -18,6 +18,7 @@ let settings = null;
 
 renderHeader('home');
 initCustomSelects();
+setupFaqAnimation();
 injectIcons(document);
 initHero(document.querySelector('.hero'));
 initReveal();
@@ -260,3 +261,32 @@ function setupContactForm() {
     input('name').focus();
   });
 }
+
+/* ---------- Česta pitanja: glatko otvaranje i zatvaranje ---------- */
+
+/* <details> se inače otvara naglo; ovdje se odgovor razvija/skuplja po visini.
+   Slušač je na listi, pa radi i kad se pitanja ponovo iscrtaju iz baze. */
+function setupFaqAnimation() {
+  const list = document.getElementById('faq-list');
+  if (!list || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  list.addEventListener('click', (e) => {
+    const summary = e.target.closest('.faq-item > summary');
+    if (!summary) return;
+    const item = summary.parentElement;
+    const body = item.querySelector(':scope > :not(summary)');
+    if (!body || item.dataset.animating) return;
+    e.preventDefault();
+    item.dataset.animating = '1';
+    const finish = () => { delete item.dataset.animating; };
+    if (item.open) {
+      item.classList.add('is-closing');
+      const anim = body.animate([{ height: `${body.offsetHeight}px`, opacity: 1 }, { height: '0px', opacity: 0 }], { duration: 240, easing: 'ease' });
+      anim.onfinish = () => { item.open = false; item.classList.remove('is-closing'); finish(); };
+    } else {
+      item.open = true;
+      const anim = body.animate([{ height: '0px', opacity: 0 }, { height: `${body.offsetHeight}px`, opacity: 1 }], { duration: 300, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' });
+      anim.onfinish = finish;
+    }
+  });
+}
+

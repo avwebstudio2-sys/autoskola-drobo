@@ -310,20 +310,24 @@ export function toast(message, type = 'info') {
 /** Lagano pojavljivanje elemenata sa [data-reveal] pri skrolanju. */
 export function initReveal(root = document) {
   const els = root.querySelectorAll('[data-reveal]:not(.is-revealed)');
+  // Nakon pojavljivanja element dobija reveal-done: pravila za pojavljivanje više ne važe, pa
+  // hover efekti elementa (podizanje, sjenka) imaju svoj prelaz, bez kašnjenja pojavljivanja
+  const done = (el, delay = 0) => setTimeout(() => el.classList.add('reveal-done'), delay);
   if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    els.forEach((el) => el.classList.add('is-revealed'));
+    els.forEach((el) => { el.classList.add('is-revealed', 'reveal-done'); });
     return;
   }
   const io = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (!entry.isIntersecting) return;
       entry.target.classList.add('is-revealed');
+      done(entry.target, 760 + (Number(entry.target.dataset.reveal) || 0) * 70);
       io.unobserve(entry.target);
     });
   }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
   els.forEach((el, i) => {
     el.style.setProperty('--reveal-delay', `${(Number(el.dataset.reveal) || 0) * 70}ms`);
     io.observe(el);
-    if (i > 200) el.classList.add('is-revealed');
+    if (i > 200) { el.classList.add('is-revealed'); done(el); }
   });
 }

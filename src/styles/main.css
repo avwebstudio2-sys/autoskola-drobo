@@ -682,8 +682,13 @@ ul { margin: 0; padding: 0; list-style: none; }
 .footer-list { display: grid; gap: 12px; }
 .footer-list li { display: flex; gap: 10px; align-items: flex-start; }
 .footer-list .icon { margin-top: 3px; color: var(--red); }
-.footer-list a { text-decoration: none; transition: color 0.2s ease; }
-.footer-list a:hover { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+.footer-list a {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 3px;
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+.footer-list a:hover { color: #fff; text-decoration-color: currentColor; }
 .footer-links li { display: block; }
 .footer-bottom {
   display: flex;
@@ -777,12 +782,13 @@ ul { margin: 0; padding: 0; list-style: none; }
 /* ---------- Pojavljivanje pri skrolanju ----------
    Samo kad JavaScript radi (klasa .js na <html>): bez JS-a, i za pretraživače, sadržaj je odmah vidljiv. */
 
-.js [data-reveal] {
+/* Pojavljivanje pri skrolu; s reveal-done (ui.js) pravila prestaju važiti, da ne gaze hover elementa */
+.js [data-reveal]:not(.reveal-done) {
   opacity: 0;
   transform: translateY(24px);
   transition: opacity 0.7s var(--ease-out) var(--reveal-delay, 0ms), transform 0.7s var(--ease-out) var(--reveal-delay, 0ms);
 }
-.js [data-reveal].is-revealed { opacity: 1; transform: none; }
+.js [data-reveal].is-revealed:not(.reveal-done) { opacity: 1; transform: none; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -872,3 +878,7 @@ ul { margin: 0; padding: 0; list-style: none; }
 .dp-clear { padding: 6px 10px; font-weight: 700; font-size: 0.9rem; color: var(--red); }
 .dp-clear:hover { background: var(--red-soft); }
 
+/* Otvaranje dijaloga (admin, uvećana slika) jednako glatko kao prozor za potvrdu */
+.admin-dialog[open], .lightbox[open] { animation: dialog-in 0.22s var(--ease-out); }
+.confirm-dialog[open]::backdrop, .admin-dialog[open]::backdrop, .lightbox[open]::backdrop { animation: backdrop-in 0.22s ease; }
+@keyframes backdrop-in { from { opacity: 0; } }
