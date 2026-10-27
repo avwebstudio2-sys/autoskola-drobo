@@ -76,6 +76,11 @@ export function icon(name, { size = 20, className = '' } = {}) {
   return `<svg class="icon ${className}" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ''}</svg>`;
 }
 
+/** Samo http(s) linkovi; sve drugo (npr. javascript:) postaje bezopasno. */
+export function safeHref(url) {
+  return /^https?:\/\//i.test(String(url || '').trim()) ? esc(String(url).trim()) : '#';
+}
+
 export function esc(value) {
   return String(value ?? '').replace(/[&<>"']/g, (c) => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
@@ -227,7 +232,7 @@ export function footerHTML(settings) {
       </div>
       <div>
         <h2 class="footer-title">Pratite nas</h2>
-        <a class="btn btn-ghost btn-sm" href="${esc(settings.facebook)}" target="_blank" rel="noopener">${icon('facebook', { size: 18 })} Facebook</a>
+        <a class="btn btn-ghost btn-sm" href="${safeHref(settings.facebook)}" target="_blank" rel="noopener">${icon('facebook', { size: 18 })} Facebook</a>
       </div>
     </div>
     <div class="container footer-bottom">

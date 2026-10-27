@@ -431,11 +431,11 @@ function renderEnrollments() {
               <td data-label="Kategorija">${esc(e.category || '–')}</td>
               <td data-label="Druga autoškola">${esc(e.otherSchool || '–')}</td>
               <td data-label="Status">
-                <select class="select select-sm status-select status-${esc(e.status)}" data-id="${e.id}" aria-label="Status prijave">
+                <select class="select select-sm status-select status-${esc(e.status)}" data-id="${esc(e.id)}" aria-label="Status prijave">
                   ${Object.entries(STATUSES).map(([k, v]) => `<option value="${k}"${e.status === k ? ' selected' : ''}>${v}</option>`).join('')}
                 </select>
               </td>
-              <td><button class="icon-btn icon-btn--danger" data-del="${e.id}" aria-label="Obriši prijavu">${icon('trash', { size: 18 })}</button></td>
+              <td><button class="icon-btn icon-btn--danger" data-del="${esc(e.id)}" aria-label="Obriši prijavu">${icon('trash', { size: 18 })}</button></td>
             </tr>`).join('')}
         </tbody>
       </table>
@@ -465,7 +465,11 @@ function exportCsv(rows) {
     ['Telefon', (e) => e.phone], ['Program', (e) => PROGRAMS[e.program] || e.program], ['Kategorija', (e) => e.category],
     ['Druga autoškola', (e) => e.otherSchool], ['Status', (e) => STATUSES[e.status] || e.status],
   ];
-  const q = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  // Vrijednost koja počinje sa = + - @ Excel bi izvršio kao formulu: ispred ide apostrof
+  const q = (v) => {
+    const t = String(v ?? '');
+    return `"${(/^[=+\-@\t\r]/.test(t) ? `'${t}` : t).replace(/"/g, '""')}"`;
+  };
   const csv = [cols.map(([h]) => q(h)).join(';'), ...rows.map((r) => cols.map(([, f]) => q(f(r))).join(';'))].join('\r\n');
   const blob = new Blob([`﻿${csv}`], { type: 'text/csv;charset=utf-8' });
   const a = document.createElement('a');
@@ -490,8 +494,8 @@ function renderMessages() {
         </div>
         <p>${esc(m.message)}</p>
         <div class="message-actions">
-          <button class="btn btn-ghost btn-sm" data-read="${m.id}">${m.read ? 'Označi kao nepročitano' : `${icon('check', { size: 16 })} Označi kao pročitano`}</button>
-          <button class="icon-btn icon-btn--danger" data-del="${m.id}" aria-label="Obriši poruku">${icon('trash', { size: 18 })}</button>
+          <button class="btn btn-ghost btn-sm" data-read="${esc(m.id)}">${m.read ? 'Označi kao nepročitano' : `${icon('check', { size: 16 })} Označi kao pročitano`}</button>
+          <button class="icon-btn icon-btn--danger" data-del="${esc(m.id)}" aria-label="Obriši poruku">${icon('trash', { size: 18 })}</button>
         </div>
       </li>`).join('')}</ul>` : `<div class="empty-state">${icon('inbox', { size: 32 })}<p>Nema poruka.</p></div>`}`;
   main.querySelectorAll('[data-read]').forEach((b) => b.addEventListener('click', () => {
@@ -560,9 +564,9 @@ function table(cfg, rows, editable) {
           ${rows.map((r) => `<tr>
             ${cfg.columns.map((c) => `<td data-label="${c.label}">${c.render ? c.render(r) : esc(r[c.key] ?? '')}</td>`).join('')}
             ${editable ? `<td class="row-actions">
-              <button class="icon-btn" data-edit="${r.id}" aria-label="Uredi">${icon('edit', { size: 18 })}</button>
-              <button class="icon-btn" data-copy="${r.id}" aria-label="Kopiraj kao novo">${icon('plus', { size: 18 })}</button>
-              <button class="icon-btn icon-btn--danger" data-del="${r.id}" aria-label="Obriši">${icon('trash', { size: 18 })}</button>
+              <button class="icon-btn" data-edit="${esc(r.id)}" aria-label="Uredi">${icon('edit', { size: 18 })}</button>
+              <button class="icon-btn" data-copy="${esc(r.id)}" aria-label="Kopiraj kao novo">${icon('plus', { size: 18 })}</button>
+              <button class="icon-btn icon-btn--danger" data-del="${esc(r.id)}" aria-label="Obriši">${icon('trash', { size: 18 })}</button>
             </td>` : ''}
           </tr>`).join('')}
         </tbody>
