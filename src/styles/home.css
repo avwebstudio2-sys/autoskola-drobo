@@ -590,7 +590,8 @@
   transition: transform 0.3s var(--ease-out);
 }
 .faq-item[open] summary .icon { transform: rotate(180deg); }
-.faq-item p { padding: 0 22px 20px; color: var(--muted-on-light); }
+.faq-item.is-closing summary .icon { transform: none; }
+.faq-item p { padding: 0 22px 20px; color: var(--muted-on-light); overflow: hidden; }
 @media (max-width: 900px) { .faq-grid { grid-template-columns: 1fr; } }
 
 /* ---------- Kontakt ---------- */

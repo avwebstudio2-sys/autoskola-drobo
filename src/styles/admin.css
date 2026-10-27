@@ -73,6 +73,7 @@ code {
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
+  transition: color 0.2s ease;
 }
 .link-btn:hover { color: var(--red); }
 
