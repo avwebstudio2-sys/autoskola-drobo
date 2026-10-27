@@ -179,7 +179,9 @@ code {
 .admin-main .btn-ghost { color: var(--text-on-light); }
 
 @media (max-width: 900px) {
-  .admin-shell { grid-template-columns: 1fr; }
+  /* Traka gore uvijek svoje visine; prazan prostor ide sadržaju (ranije se traka rastezala
+     kad je stranica imala malo sadržaja, npr. dok se učitava ili kad nema poruka) */
+  .admin-shell { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
   .admin-side {
     position: sticky;
     z-index: 20;
