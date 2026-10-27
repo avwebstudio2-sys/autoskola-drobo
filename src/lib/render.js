@@ -3,7 +3,7 @@
  * Isti kod koristi build (scripts/prerender-plugin.mjs) da sadržaj bude upisan direktno u HTML
  * za pretraživače, i preglednik da ga osvježi podacima iz baze.
  */
-import { icon, esc, telHref, dayParts, formatDate, monthLabel } from './ui.js';
+import { icon, esc, safeHref, telHref, dayParts, formatDate, monthLabel } from './ui.js';
 import { EXAM_TYPES, CLASS_LOCATIONS, CLASS_TYPES } from './defaults.js';
 
 /* ---------- Početna ---------- */
@@ -93,7 +93,7 @@ export function contactCardsHTML(s) {
     { ic: 'phone', label: 'Telefon', html: `<a href="${telHref(s.phone)}">${esc(s.phone)}</a>${s.phone2 ? `<br /><a href="${telHref(s.phone2)}">${esc(s.phone2)}</a>` : ''}` },
     { ic: 'mail', label: 'E-mail', html: `<a href="mailto:${esc(s.email)}">${esc(s.email)}</a>` },
     { ic: 'clock', label: 'Radno vrijeme', html: `<span class="val">${esc(s.hours)}</span>` },
-    { ic: 'facebook', label: 'Facebook', html: `<a href="${esc(s.facebook)}" target="_blank" rel="noopener">Edukacija – Drobo</a>` },
+    { ic: 'facebook', label: 'Facebook', html: `<a href="${safeHref(s.facebook)}" target="_blank" rel="noopener">Edukacija – Drobo</a>` },
   ];
   return items.map((it, i) => `
     <li data-reveal="${i}"><span class="ic">${icon(it.ic)}</span><div><small>${it.label}</small>${it.html}</div></li>`).join('');
