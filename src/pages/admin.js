@@ -319,6 +319,8 @@ function showTab() {
   document.querySelectorAll('.admin-nav a').forEach((a) => {
     if (a.dataset.tab === tab) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
   });
+  // Na telefonu je meni vodoravna traka: odabrana stavka se pomakne u vidljivi dio
+  document.querySelector('.admin-nav a[aria-current="page"]')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   tabUnsub?.();
   tabUnsub = null;
   const main = document.getElementById('admin-main');
