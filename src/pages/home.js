@@ -196,6 +196,7 @@ function setupEnrollForm() {
 function showEnrollSuccess(data, s) {
   document.getElementById('enroll-form').hidden = true;
   const box = document.getElementById('enroll-success');
+  box.closest('.upis-card')?.classList.add('is-done');
   document.getElementById('success-name').textContent = data.fullName;
   document.getElementById('success-phone').textContent = data.phone;
   const docs = Array.isArray(s.requiredDocs) ? s.requiredDocs : String(s.requiredDocs || '').split('\n');

@@ -516,6 +516,8 @@
 .steps p { color: var(--muted-on-dark); }
 
 .upis-card { position: sticky; top: calc(var(--header-h) + 20px); }
+/* Potvrda prijave ne prati skrol (home.js dodaje is-done) */
+.upis-card.is-done { position: static; }
 .form-title {
   font-family: var(--font-display);
   font-weight: 800;
