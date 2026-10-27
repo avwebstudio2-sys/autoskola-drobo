@@ -89,7 +89,7 @@ export function faqHTML(list) {
 
 export function contactCardsHTML(s) {
   const items = [
-    { ic: 'pin', label: 'Adresa', html: `<span class="val">${esc(s.address)}</span>` },
+    { ic: 'pin', label: 'Adresa', html: `<a href="${safeHref(mapLink(s))}" target="_blank" rel="noopener" title="Otvori lokaciju u Google Maps">${esc(s.address)}</a>` },
     { ic: 'phone', label: 'Telefon', html: `<a href="${telHref(s.phone)}">${esc(s.phone)}</a>${s.phone2 ? `<br /><a href="${telHref(s.phone2)}">${esc(s.phone2)}</a>` : ''}` },
     { ic: 'mail', label: 'E-mail', html: `<a href="mailto:${esc(s.email)}">${esc(s.email)}</a>` },
     { ic: 'clock', label: 'Radno vrijeme', html: `<span class="val">${esc(s.hours)}</span>` },
@@ -100,7 +100,8 @@ export function contactCardsHTML(s) {
 }
 
 export const mapEmbedSrc = (s) => `https://maps.google.com/maps?q=${encodeURIComponent(s.mapQuery || s.address)}&z=15&output=embed`;
-export const mapLink = (s) => `https://maps.google.com/maps?q=${encodeURIComponent(s.mapQuery || s.address)}`;
+/* Link na lokaciju: ručno postavljen Google Maps link, inače pretraga po mapQuery/adresi */
+export const mapLink = (s) => (/^https?:\/\//i.test(s.mapLink || '') ? s.mapLink.trim() : `https://maps.google.com/maps?q=${encodeURIComponent(s.mapQuery || s.address)}`);
 
 export function categoryOptionsHTML(categories) {
   return '<option value="">Odaberite kategoriju</option>'
