@@ -17,7 +17,7 @@ import { DEFAULT_SETTINGS, DEFAULTS, sortList, todayISO } from '../src/lib/defau
 import { headerHTML, footerHTML, icon, esc, telHref } from '../src/lib/ui.js';
 import {
   announcementHTML, servicesHTML, categoriesHTML, scheduleHTML, examPreviewHTML, faqHTML, contactCardsHTML,
-  mapEmbedSrc, categoryOptionsHTML, examListHTML, examCategoryOptionsHTML, quizHubHTML,
+  mapEmbedSrc, mapLink, categoryOptionsHTML, examListHTML, examCategoryOptionsHTML, quizHubHTML,
   localBusinessLD, faqLD, ldJSON,
 } from '../src/lib/render.js';
 
@@ -131,6 +131,7 @@ function renderPage(page, html, siteUrl, c, questions) {
   };
   let out = html.replace(/<!--ssr:(\w+)-->/g, (m, name) => (name in blocks ? blocks[name] : m));
   out = out.replaceAll('%SSR_MAP_SRC%', esc(mapEmbedSrc(s)));
+  out = out.replaceAll('%SSR_MAP_LINK%', esc(mapLink(s)));
 
   // Tekstovi iz postavki (admin) i brojevi pitanja
   out = out.replace(/(data-setting="(\w+)"[^>]*>)([^<]*)(<)/g, (m, open, key, text, lt) => `${open}${s[key] ? esc(s[key]) : text}${lt}`);

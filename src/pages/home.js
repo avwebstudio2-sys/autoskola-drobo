@@ -2,7 +2,7 @@ import { renderHeader, renderFooter, icon, esc, initReveal, telHref } from '../l
 import { getSettings, getList, submitEnrollment, submitMessage, todayISO } from '../lib/content.js';
 import {
   announcementHTML, servicesHTML, categoriesHTML, scheduleHTML, examPreviewHTML, faqHTML,
-  contactCardsHTML, mapEmbedSrc, categoryOptionsHTML, localBusinessLD, faqLD, ldJSON,
+  contactCardsHTML, mapEmbedSrc, mapLink, categoryOptionsHTML, localBusinessLD, faqLD, ldJSON,
 } from '../lib/render.js';
 import { firebaseReady } from '../lib/firebase.js';
 import { initHero } from '../lib/hero.js';
@@ -40,6 +40,7 @@ updateCategoryOptions(categories);
 updateStructuredData(settings, services, categories, faq);
 const map = document.getElementById('map-frame');
 if (map.getAttribute('src') !== mapEmbedSrc(settings)) map.src = mapEmbedSrc(settings);
+document.getElementById('map-link').href = mapLink(settings);
 initReveal();
 
 function injectIcons(root) {
