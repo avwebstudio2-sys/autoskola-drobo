@@ -167,6 +167,10 @@
         <div class="card upis-card" data-reveal="1">
           <form id="enroll-form" class="form-grid" novalidate>
             <h3 class="form-title">Prijava za upis</h3>
+            <div class="hp-field" aria-hidden="true">
+              <label for="f-website">Ne popunjavajte ovo polje</label>
+              <input type="text" id="f-website" name="website" tabindex="-1" autocomplete="off" />
+            </div>
             <div class="field">
               <label for="f-name">Ime i prezime <span class="req" aria-hidden="true">*</span></label>
               <input class="input" id="f-name" name="fullName" autocomplete="name" required minlength="3" maxlength="120" placeholder="Vaše ime i prezime" aria-describedby="f-name-err" />
@@ -260,6 +264,10 @@
           <form class="card card--dark contact-form form-grid" id="contact-form" novalidate data-reveal="2">
             <h3 class="form-title">Pošalji poruku</h3>
             <div class="contact-fields form-grid">
+              <div class="hp-field" aria-hidden="true">
+                <label for="c-website">Ne popunjavajte ovo polje</label>
+                <input type="text" id="c-website" name="website" tabindex="-1" autocomplete="off" />
+              </div>
               <div class="field">
                 <label for="c-name">Ime</label>
                 <input class="input input--dark" id="c-name" name="name" required minlength="2" maxlength="120" autocomplete="name" aria-describedby="c-name-err" />

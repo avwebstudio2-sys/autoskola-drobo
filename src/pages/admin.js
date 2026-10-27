@@ -280,7 +280,7 @@ function renderShell(user) {
           <span><strong>Edukacija – Drobo</strong><small>Administracija</small></span>
         </a>
         <nav class="admin-nav" aria-label="Administracija">
-          ${TABS.map((t) => `<a href="#${t.id}" data-tab="${t.id}">${icon(t.icon, { size: 20 })}<span>${t.label}</span>${t.badge ? `<span class="nav-badge" data-badge="${t.badge}" hidden></span>` : ''}</a>`).join('')}
+          ${TABS.map((t) => `<a href="#${t.id}" data-tab="${t.id}" aria-label="${t.label}" title="${t.label}">${icon(t.icon, { size: 20 })}<span>${t.label}</span>${t.badge ? `<span class="nav-badge" data-badge="${t.badge}" hidden></span>` : ''}</a>`).join('')}
         </nav>
         <div class="admin-user">
           <span title="${esc(user.email)}">${esc(user.email)}</span>

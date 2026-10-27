@@ -337,7 +337,7 @@ function createRunner(cfg) {
       if (!reveal && isSel) cls = 'is-selected';
       if (reveal && isSel && isRight) cls += ' is-selected';
       return `
-        <li>
+        <li role="none">
           <button type="button" class="opt ${cls}" data-o="${oi}" role="${multi ? 'checkbox' : 'radio'}" aria-checked="${isSel}" ${checked ? 'aria-disabled="true"' : ''}>
             <span class="opt-key">${oi + 1}</span>
             <span class="opt-text">${esc(text)}</span>
