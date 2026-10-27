@@ -191,7 +191,6 @@ function setupEnrollForm() {
     }
   });
 
-  document.getElementById('print-docs').addEventListener('click', () => window.print());
 }
 
 function showEnrollSuccess(data, s) {
