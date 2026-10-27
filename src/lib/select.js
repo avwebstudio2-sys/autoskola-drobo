@@ -13,6 +13,10 @@ const CHECK = '<svg class="cs-check" width="18" height="18" viewBox="0 0 24 24" 
 let uid = 0;
 let openMenu = null;
 
+/* Lista se dodaje u otvoreni <dialog> ako je polje u njemu: modalni dijalog je iznad stranice
+   i sve izvan njega je neaktivno, pa se lista dodana u <body> ne bi vidjela niti dala kliknuti. */
+export const popupHost = (el) => el.closest('dialog') || document.body;
+
 export function enhanceSelect(select) {
   if (select.dataset.cs || select.multiple || select.size > 1) return;
   select.dataset.cs = '1';
@@ -73,6 +77,8 @@ export function enhanceSelect(select) {
 
   const options = () => [...select.options];
   const enabled = (i) => { const o = select.options[i]; return o && !o.disabled && !o.hidden; };
+  // „Odaberite …“ (prazna, onemogućena stavka) je samo natpis na dugmetu, ne i u listi
+  const isPlaceholder = (o) => o.value === '' && o.disabled;
 
   function setActive(i, scroll = true) {
     if (!list) return;
@@ -113,7 +119,7 @@ export function enhanceSelect(select) {
     list.setAttribute('role', 'listbox');
     if (label) list.setAttribute('aria-label', label);
     list.innerHTML = options().map((o, i) => `
-      <li class="cs-option" id="${id}-o${i}" role="option" data-i="${i}" aria-selected="${o.selected}"${!enabled(i) ? ' aria-disabled="true"' : ''}${o.hidden ? ' hidden' : ''}>
+      <li class="cs-option" id="${id}-o${i}" role="option" data-i="${i}" aria-selected="${o.selected}"${!enabled(i) ? ' aria-disabled="true"' : ''}${o.hidden || isPlaceholder(o) ? ' hidden' : ''}>
         <span></span>${CHECK}
       </li>`).join('');
     options().forEach((o, i) => { list.children[i].querySelector('span').textContent = o.textContent; });
@@ -126,7 +132,7 @@ export function enhanceSelect(select) {
       const li = e.target.closest('.cs-option');
       if (li && li.getAttribute('aria-disabled') !== 'true' && Number(li.dataset.i) !== active) setActive(Number(li.dataset.i), false);
     });
-    document.body.append(list);
+    popupHost(wrap).append(list);
     place();
     requestAnimationFrame(() => list?.classList.add('is-open'));
     button.setAttribute('aria-expanded', 'true');
@@ -201,9 +207,127 @@ export function enhanceSelect(select) {
   sync();
 }
 
+/**
+ * Prijedlozi ispod tekstualnog polja umjesto <datalist> preglednika.
+ * Polje i dalje prima slobodan unos; s data-multi se prijedlog dodaje kao još jedna
+ * vrijednost odvojena zarezom (npr. kategorije „A, B, C“).
+ */
+export function enhanceSuggest(input) {
+  if (input.dataset.suggest) return;
+  const dl = input.list || document.getElementById(input.getAttribute('list'));
+  if (!dl) return;
+  const values = [...dl.options].map((o) => o.value).filter(Boolean);
+  input.dataset.suggest = '1';
+  input.removeAttribute('list');
+  input.setAttribute('autocomplete', 'off');
+  input.setAttribute('role', 'combobox');
+  input.setAttribute('aria-autocomplete', 'list');
+  input.setAttribute('aria-expanded', 'false');
+  const id = `sg${++uid}`;
+  const multi = 'multi' in input.dataset;
+  let list = null;
+  let items = [];
+  let active = -1;
+
+  const parts = () => input.value.split(',').map((t) => t.trim());
+  const current = () => (multi ? parts().pop() : input.value.trim()).toLowerCase();
+
+  function filter() {
+    const q = current();
+    const taken = multi ? parts().slice(0, -1).map((t) => t.toLowerCase()) : [];
+    return values.filter((v) => v.toLowerCase().startsWith(q) && !taken.includes(v.toLowerCase())
+      && (multi || v.toLowerCase() !== q));
+  }
+
+  function place() {
+    const r = input.getBoundingClientRect();
+    const below = innerHeight - r.bottom - 12;
+    const up = below < 180 && r.top > below;
+    list.style.left = `${r.left}px`;
+    list.style.minWidth = `${r.width}px`;
+    list.style.maxHeight = `${Math.min(260, up ? r.top - 12 : below)}px`;
+    list.style.top = up ? '' : `${r.bottom + 6}px`;
+    list.style.bottom = up ? `${innerHeight - r.top + 6}px` : '';
+  }
+
+  function render() {
+    items = filter();
+    if (!items.length) { close(); return; }
+    if (!list) {
+      list = document.createElement('ul');
+      list.className = 'cs-list cs-list--suggest';
+      list.id = `${id}-list`;
+      list.setAttribute('role', 'listbox');
+      list.addEventListener('pointerdown', (e) => e.preventDefault());
+      list.addEventListener('click', (e) => {
+        const li = e.target.closest('.cs-option');
+        if (li) choose(Number(li.dataset.i));
+      });
+      popupHost(input).append(list);
+      requestAnimationFrame(() => list?.classList.add('is-open'));
+      input.setAttribute('aria-expanded', 'true');
+      input.setAttribute('aria-controls', list.id);
+      window.addEventListener('scroll', onScroll, true);
+    }
+    active = Math.min(active, items.length - 1);
+    list.innerHTML = items.map((v, i) => `<li class="cs-option${i === active ? ' is-active' : ''}" id="${id}-o${i}" role="option" data-i="${i}" aria-selected="${i === active}"><span></span></li>`).join('');
+    items.forEach((v, i) => { list.children[i].querySelector('span').textContent = v; });
+    place();
+  }
+
+  function close() {
+    if (!list) return;
+    const el = list;
+    list = null;
+    active = -1;
+    el.classList.remove('is-open');
+    setTimeout(() => el.remove(), 160);
+    input.setAttribute('aria-expanded', 'false');
+    input.removeAttribute('aria-activedescendant');
+    window.removeEventListener('scroll', onScroll, true);
+  }
+
+  const onScroll = (e) => { if (list && !list.contains(e.target)) place(); };
+
+  function choose(i) {
+    const v = items[i];
+    if (v == null) return;
+    input.value = multi ? [...parts().slice(0, -1), v].filter(Boolean).join(', ') : v;
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+    close();
+  }
+
+  input.addEventListener('focus', render);
+  input.addEventListener('click', () => { if (!list) render(); });
+  input.addEventListener('input', () => { active = -1; render(); });
+  input.addEventListener('blur', () => setTimeout(close, 120));
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (!list) render();
+      if (!items.length) return;
+      active = e.key === 'ArrowDown' ? (active + 1) % items.length : (active - 1 + items.length) % items.length;
+      render();
+      input.setAttribute('aria-activedescendant', `${id}-o${active}`);
+      list?.children[active]?.scrollIntoView({ block: 'nearest' });
+    } else if (e.key === 'Enter' && list && active >= 0) {
+      e.preventDefault();
+      choose(active);
+    } else if (e.key === 'Escape' && list) {
+      e.preventDefault();
+      e.stopPropagation(); // ne zatvara cijeli dijalog
+      close();
+    }
+  });
+}
+
 /** Pretvara sve postojeće i buduće <select class="select"> u prilagođene menije. */
 export function initCustomSelects(root = document) {
-  const run = (scope) => scope.querySelectorAll?.('select.select:not([data-cs])').forEach(enhanceSelect);
+  const run = (scope) => {
+    scope.querySelectorAll?.('select.select:not([data-cs])').forEach(enhanceSelect);
+    scope.querySelectorAll?.('input[list]:not([data-suggest])').forEach(enhanceSuggest);
+  };
   run(root);
   if (initCustomSelects.observing) return;
   initCustomSelects.observing = true;
@@ -212,6 +336,7 @@ export function initCustomSelects(root = document) {
       r.addedNodes.forEach((node) => {
         if (node.nodeType !== 1) return;
         if (node.matches('select.select:not([data-cs])')) enhanceSelect(node);
+        else if (node.matches('input[list]:not([data-suggest])')) enhanceSuggest(node);
         else run(node);
       });
     }

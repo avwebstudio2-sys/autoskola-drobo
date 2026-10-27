@@ -7,6 +7,7 @@ import { db, auth } from '../lib/admin-firebase.js';
 import { DEFAULTS, DEFAULT_SETTINGS, EXAM_TYPES, PROGRAMS, WEEKDAYS, CLASS_LOCATIONS, CLASS_TYPES, sortList, todayISO } from '../lib/defaults.js';
 import { logoSVG, icon, esc, toast, formatDate, confirmDialog } from '../lib/ui.js';
 import { initCustomSelects } from '../lib/select.js';
+import { initDatePickers } from '../lib/datepicker.js';
 
 /* ==========================================================================
    Administracija: sve što se vidi na stranici uređuje se ovdje.
@@ -33,7 +34,7 @@ const COLLECTIONS = {
     sort: (a, b) => `${a.date}${a.time}`.localeCompare(`${b.date}${b.time}`),
     fields: [
       { key: 'type', label: 'Vrsta ispita', type: 'select', options: EXAM_TYPES, required: true },
-      { key: 'category', label: 'Kategorija', type: 'text', list: CATEGORY_CODES, placeholder: 'npr. B ili A, C, D (prazno = sve)' },
+      { key: 'category', label: 'Kategorija', type: 'text', list: CATEGORY_CODES, multi: true, placeholder: 'npr. B ili A, C, D (prazno = sve)' },
       { key: 'date', label: 'Datum', type: 'date', required: true },
       { key: 'time', label: 'Vrijeme', type: 'time24' },
       { key: 'location', label: 'Lokacija', type: 'text', placeholder: 'npr. MUP SBK, Travnik' },
@@ -630,13 +631,17 @@ function fieldHTML(f, value) {
       <p class="field-error">Unesite početak i kraj časa u formatu 17:00 (kraj mora biti poslije početka).</p></div>`;
   } else if (f.type === 'time24') {
     control = timeInputHTML({ id, name: f.key, value: v, required: f.required, placeholder: '09:00' });
+  } else if (f.type === 'date') {
+    // Kalendar u stilu stranice (src/lib/datepicker.js); vrijednost GGGG-MM-DD je u skrivenom polju
+    control = `<input class="input" id="${id}" type="text" data-datepicker data-target="${id}-value" placeholder="Odaberite datum"${req} />`
+      + `<input type="hidden" id="${id}-value" name="${f.key}" value="${esc(v)}" />`;
   } else if (f.type === 'textarea' || f.type === 'lines') {
     const text = Array.isArray(v) ? v.join('\n') : v;
     control = `<textarea class="textarea" id="${id}" name="${f.key}" rows="${f.type === 'lines' ? 4 : 3}"${req}>${esc(text)}</textarea>`;
   } else {
     const list = f.list ? ` list="${id}-list"` : '';
     const minmax = `${f.min != null ? ` min="${f.min}"` : ''}${f.max != null ? ` max="${f.max}"` : ''}`;
-    control = `<input class="input" id="${id}" name="${f.key}" type="${f.type}" value="${esc(v)}"${f.placeholder ? ` placeholder="${esc(f.placeholder)}"` : ''}${list}${minmax}${req} />`
+    control = `<input class="input" id="${id}" name="${f.key}" type="${f.type}" value="${esc(v)}"${f.placeholder ? ` placeholder="${esc(f.placeholder)}"` : ''}${list}${f.multi ? ' data-multi' : ''}${minmax}${req} />`
       + (f.list ? `<datalist id="${id}-list">${f.list.map((o) => `<option value="${esc(o)}"></option>`).join('')}</datalist>` : '');
   }
   const error = f.type === 'time24' ? 'Unesite vrijeme u formatu 09:00.' : 'Obavezno polje.';
@@ -664,6 +669,7 @@ function openEditor(name, item = null) {
   const fieldsBox = document.getElementById('edit-fields');
   fieldsBox.innerHTML = cfg.fields.map((f) => fieldHTML(f, item ? item[f.key] : defaults[f.key])).join('')
     + `<datalist id="time-suggestions">${TIME_SUGGESTIONS.map((t) => `<option value="${t}"></option>`).join('')}</datalist>`;
+  initDatePickers(fieldsBox);
   fieldsBox.querySelectorAll('[data-time]').forEach((input) => input.addEventListener('blur', () => {
     const t = normalizeTime(input.value);
     if (t) input.value = t;
@@ -690,7 +696,8 @@ function openEditor(name, item = null) {
         bad = f.required && !el.value.trim();
       }
       el.closest('.field').classList.toggle('has-error', bad);
-      if (bad && ok) { el.focus(); ok = false; }
+      // skriveno polje datuma: fokus ide na vidljivo polje kalendara
+      if (bad && ok) { (el.type === 'hidden' ? el.previousElementSibling : el).focus(); ok = false; }
     });
     if (!ok) return;
     const data = Object.fromEntries(cfg.fields.map((f) => [f.key, readField(form, f)]));
