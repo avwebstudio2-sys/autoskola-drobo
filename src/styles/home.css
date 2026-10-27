@@ -634,7 +634,6 @@
 .contact-cards a, .contact-cards span.val { font-weight: 600; text-decoration: none; word-break: break-word; transition: color 0.2s ease; }
 .contact-cards a:hover { color: var(--red); }
 .map-wrap {
-  position: relative;
   min-height: 300px;
   border-radius: var(--radius-lg);
   overflow: hidden;
@@ -648,7 +647,6 @@
   border: 0;
   filter: grayscale(0.4) contrast(1.05);
 }
-.map-open { position: absolute; left: 12px; bottom: 12px; z-index: 1; box-shadow: 0 10px 24px -10px rgba(0, 0, 0, 0.6); }
 .contact-form { align-content: start; gap: 14px; padding: clamp(20px, 2.2vw, 26px); }
 .contact-form .contact-fields { gap: 12px; }
 .contact-form .input { min-height: 44px; padding: 9px 12px; }
