@@ -35,6 +35,7 @@ export function enhanceDateInput(input) {
   const startView = input.dataset.start || 'day';
 
   input.readOnly = true;
+  if (hidden.value && parse(hidden.value)) input.value = formatLong(parse(hidden.value));
   input.setAttribute('role', 'combobox');
   input.setAttribute('aria-haspopup', 'dialog');
   input.setAttribute('aria-expanded', 'false');
@@ -140,7 +141,8 @@ export function enhanceDateInput(input) {
     pop.setAttribute('aria-label', 'Kalendar');
     pop.addEventListener('click', onClick);
     pop.addEventListener('keydown', onKey);
-    document.body.append(pop);
+    // u otvoreni <dialog> (modal), inače se kalendar ne vidi i ne može kliknuti
+    (input.closest('dialog') || document.body).append(pop);
     render();
     requestAnimationFrame(() => pop?.classList.add('is-open'));
     input.setAttribute('aria-expanded', 'true');
