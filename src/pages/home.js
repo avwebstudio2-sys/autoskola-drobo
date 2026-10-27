@@ -134,6 +134,12 @@ function validateForm(form) {
   return !firstBad;
 }
 
+/* Zamka za botove: skriveno polje „website“ ljudi ne vide i ne popunjavaju, a botovi koji
+   popunjavaju sva polja da. Tada se ništa ne šalje u bazu, a bot vidi uobičajenu potvrdu. */
+function isBot(form) {
+  return Boolean(form.elements.namedItem('website')?.value);
+}
+
 /** Slanje ne smije visiti bez kraja (spora mreža, blokator): nakon 20 s javi grešku. */
 function withTimeout(promise, ms = 20000) {
   return Promise.race([
@@ -182,7 +188,7 @@ function setupEnrollForm() {
       otherSchool: form.program.value === 'teorija' ? form.otherSchool.value.trim() : '',
     };
     try {
-      await withTimeout(submitEnrollment(data));
+      if (!isBot(form)) await withTimeout(submitEnrollment(data));
       showEnrollSuccess(data, settings || await getSettings());
     } catch (err) {
       console.error(err);
@@ -238,7 +244,7 @@ function setupContactForm() {
     };
     setBusy(btn, true, 'Šaljem…');
     try {
-      await withTimeout(submitMessage(data));
+      if (!isBot(form)) await withTimeout(submitMessage(data));
       document.getElementById('contact-success-name').textContent = data.name;
       document.getElementById('contact-success-contact').textContent = data.contact;
       injectIcons(success);

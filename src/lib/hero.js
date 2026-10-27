@@ -68,25 +68,37 @@ export function initHero(hero) {
 
   readProgress();
   current = target;
-  window.addEventListener('scroll', readProgress, { passive: true });
 
   let last = performance.now();
   let visible = true;
-  new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; }).observe(hero);
+  let running = false;
 
+  // Petlja crta samo dok animacija stiže skrol (ili se učita novi kadar), pa staje:
+  // ranije je radila 60 puta u sekundi i kad se ništa ne mijenja (procesor i baterija)
   const tick = (now) => {
     const dt = Math.min(64, now - last) / 1000;
     last = now;
-    if (visible) {
-      // Mekano praćenje skrola: kotačić miša skače, a animacija se kreće glatko
-      current = lerp(current, target, 1 - Math.pow(0.0005, dt));
-      if (Math.abs(current - target) < 0.0002) current = target;
-      applyStages(current);
-      player.draw(current);
-    }
+    if (!visible) { running = false; return; }
+    // Mekano praćenje skrola: kotačić miša skače, a animacija se kreće glatko
+    current = lerp(current, target, 1 - Math.pow(0.0005, dt));
+    if (Math.abs(current - target) < 0.0002) current = target;
+    applyStages(current);
+    player.draw(current);
+    if (current === target) { running = false; return; }
     requestAnimationFrame(tick);
   };
-  requestAnimationFrame(tick);
+  const kick = () => {
+    if (running || !visible) return;
+    running = true;
+    last = performance.now();
+    requestAnimationFrame(tick);
+  };
+
+  window.addEventListener('scroll', () => { readProgress(); kick(); }, { passive: true });
+  window.addEventListener('resize', kick);
+  player.onFrame = kick;
+  new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; kick(); }).observe(hero);
+  kick();
 }
 
 /* ---------- Kadrovi na canvasu ---------- */

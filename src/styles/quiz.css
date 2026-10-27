@@ -284,7 +284,7 @@
   .q-card.has-img .q-figure { order: -1; }
 }
 .q-tags { display: flex; flex-wrap: wrap; gap: 8px; }
-.q-card .chip--dark { background: var(--asphalt-900); color: var(--paper); }
+.q-card .chip--dark, .review-item .chip--dark { background: var(--asphalt-900); color: var(--paper); }
 .q-text {
   margin: 16px 0 22px;
   font-size: clamp(1.2rem, 2.1vw, 1.5rem);
