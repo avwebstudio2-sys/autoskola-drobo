@@ -10,8 +10,10 @@ export const DEFAULT_SETTINGS = {
   facebook: 'https://www.facebook.com/edukacijadrobo',
   hours: 'Po dogovoru, nazovite nas za termin',
   mapQuery: 'Autoškola Edukacija Drobo, Konatur, Travnik',
-  // Tačna lokacija autoškole (oznaka na ugrađenoj karti u kontaktu)
-  mapCoords: '44.225188026174905, 17.667920811981',
+  // Zapis autoškole na Google Maps (link iz adresne trake): karta u kontaktu prikazuje baš ovaj zapis
+  mapUrl: 'https://www.google.com/maps/place/Auto%C5%A1kola+%22Edukacija+-+Drobo%22+Travnik/@44.2250266,17.665303,624m/data=!3m2!1e3!4b1!4m6!3m5!1s0x475eff414d6b1d39:0x970b6ab2efe8a24f!8m2!3d44.2250266!4d17.6678779!16s%2Fg%2F11p2c4brnv',
+  // Rezerva ako link nije upisan
+  mapCoords: '44.2250266, 17.6678779',
   announcement: '',
   requiredDocs: [
     'Ljekarsko uvjerenje o zdravstvenoj sposobnosti za upravljanje motornim vozilom',

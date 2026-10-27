@@ -119,7 +119,7 @@ const SETTINGS_FIELDS = [
   { key: 'email', label: 'E-mail', type: 'email' },
   { key: 'address', label: 'Adresa', type: 'text' },
   { key: 'hours', label: 'Radno vrijeme', type: 'text' },
-  { key: 'mapCoords', label: 'Lokacija na karti (koordinate)', type: 'text', hint: 'Npr. 44.225188, 17.667920 (desni klik na lokaciju u Google Maps kopira koordinate).' },
+  { key: 'mapUrl', label: 'Lokacija na karti (Google Maps link)', type: 'url', hint: 'Otvorite autoškolu na Google Maps na računaru i kopirajte cijelu adresu iz preglednika (počinje sa https://www.google.com/maps/place/…).' },
   { key: 'facebook', label: 'Facebook stranica (link)', type: 'url' },
   { group: 'Početna stranica' },
   { key: 'heroText', label: 'Tekst ispod slogana (hero)', type: 'textarea' },

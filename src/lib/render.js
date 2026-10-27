@@ -99,13 +99,36 @@ export function contactCardsHTML(s) {
     <li data-reveal="${i}"><span class="ic">${icon(it.ic)}</span><div><small>${it.label}</small>${it.html}</div></li>`).join('');
 }
 
-export const mapEmbedSrc = (s) => `https://maps.google.com/maps?q=${encodeURIComponent(mapTarget(s))}&z=16&output=embed`;
-/* Karta: koordinate (mapCoords) ako su upisane, inače pretraga po nazivu/adresi */
-const mapTarget = (s) => {
-  const c = String(s.mapCoords || '').replace(/\s+/g, '');
-  return /^-?\d+(\.\d+)?,-?\d+(\.\d+)?$/.test(c) ? c : (s.mapQuery || s.address);
+/*
+ * Karta u kontaktu. Iz Google Maps linka zapisa (mapUrl) se čitaju naziv, koordinate i ID zapisa,
+ * pa karta prikazuje karticu autoškole (naziv, ocjene, „Prikaži veću kartu“), a ne samo tačku.
+ * Bez linka: koordinate (mapCoords), pa naziv/adresa.
+ */
+export function mapPlace(s) {
+  const url = String(s.mapUrl || '');
+  const name = url.match(/\/maps\/place\/([^/@?]+)/);
+  const at = url.match(/!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/) || url.match(/@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/);
+  const ftid = url.match(/!1s(0x[0-9a-f]+:0x[0-9a-f]+)/i);
+  let decoded = '';
+  try { decoded = name ? decodeURIComponent(name[1].replace(/\+/g, ' ')) : ''; } catch { decoded = ''; }
+  const coords = String(s.mapCoords || '').replace(/\s+/g, '');
+  return {
+    name: decoded,
+    ll: at ? `${at[1]},${at[2]}` : (/^-?\d+(\.\d+)?,-?\d+(\.\d+)?$/.test(coords) ? coords : ''),
+    ftid: ftid ? ftid[1] : '',
+  };
+}
+
+export const mapEmbedSrc = (s) => {
+  const p = mapPlace(s);
+  const q = p.name || p.ll || s.mapQuery || s.address;
+  return `https://maps.google.com/maps?q=${encodeURIComponent(q)}${p.ll ? `&ll=${p.ll}` : ''}${p.ftid ? `&ftid=${p.ftid}` : ''}&z=16&output=embed`;
 };
-export const mapLink = (s) => `https://maps.google.com/maps?q=${encodeURIComponent(mapTarget(s))}`;
+
+/* Link za Google (JSON-LD hasMap): zapis na Google Maps, bez parametara praćenja */
+export const mapLink = (s) => (/^https:\/\/www\.google\.[a-z.]+\/maps\//.test(s.mapUrl || '')
+  ? String(s.mapUrl).split('?')[0]
+  : `https://maps.google.com/maps?q=${encodeURIComponent(mapPlace(s).ll || s.mapQuery || s.address)}`);
 
 export function categoryOptionsHTML(categories) {
   return '<option value="">Odaberite kategoriju</option>'
