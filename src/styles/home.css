@@ -668,15 +668,6 @@
 }
 @media (max-width: 680px) { .contact-grid { grid-template-columns: 1fr; } .map-wrap { grid-row: auto; } .contact-cards { grid-auto-rows: auto; } }
 
-/* ---------- Print: uputstvo za dokumentaciju ---------- */
-
-@media print {
-  body * { visibility: hidden; }
-  .enroll-success, .enroll-success * { visibility: visible; }
-  .enroll-success { position: absolute; inset: 0; padding: 24px; color: #000; }
-  .success-actions { display: none; }
-}
-
 /* ---------- Telefon ---------- */
 
 @media (max-width: 600px) {
