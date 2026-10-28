@@ -21,7 +21,7 @@ import {
   localBusinessLD, faqLD, ldJSON,
 } from '../src/lib/render.js';
 
-const DEFAULT_SITE_URL = 'https://autoskola-drobo.netlify.app';
+const DEFAULT_SITE_URL = 'https://edukacijadrobo.com';
 const PAGES = {
   index: { path: '/', priority: '1.0' },
   testovi: { path: '/testovi', priority: '0.9' },
@@ -160,9 +160,9 @@ function sitemapXml(siteUrl) {
 /* ---------- Plugin ---------- */
 
 export default function prerender() {
-  // Glavna adresa sajta: SITE_URL ručno, URL na Netlifyju, VERCEL_PROJECT_PRODUCTION_URL (bez https://) na Vercelu
-  const vercelUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL && `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
-  const siteUrl = (process.env.SITE_URL || process.env.URL || vercelUrl || DEFAULT_SITE_URL).replace(/\/$/, '');
+  // Glavna adresa sajta (canonical, sitemap): vlastita domena, osim ako je SITE_URL postavljen ručno.
+  // Ne uzima se adresa hostinga (netlify.app / vercel.app), da Google uvijek vidi samo jednu adresu.
+  const siteUrl = (process.env.SITE_URL || DEFAULT_SITE_URL).replace(/\/$/, '');
   let root = process.cwd();
   let mode = 'production';
   let contentPromise;

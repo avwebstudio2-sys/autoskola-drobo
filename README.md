@@ -123,7 +123,7 @@ Zatim u `index.html` na `<canvas class="hero-canvas">` upišite broj kadrova (`d
 - **Sadržaj je u HTML-u.** Pri svakom buildu `scripts/prerender-plugin.mjs` povuče sadržaj iz Firestore-a i upiše ga direktno u HTML: zaglavlje, usluge, kategorije, raspored, ispitne rokove, FAQ, kontakt i pregled testova. Pretraživači i AI alati tako vide sav tekst i bez JavaScripta. U pregledniku se sadržaj odmah osvježi iz baze.
 - **Izmjene iz admina** posjetioci vide odmah, a u HTML (za Google) ulaze pri sljedećem buildu. Nakon većih izmjena (FAQ, usluge, kontakt, novi ispitni rokovi) na Netlifyju kliknite *Deploys → Trigger deploy → Deploy site*.
 - **Meta oznake** (canonical, Open Graph, Twitter) i **JSON-LD** (`LocalBusiness`, `FAQPage`) pravi isti plugin. Title i description su upisani u svaki HTML fajl.
-- **Adresa sajta** za canonical, `og:url`, `robots.txt` i `sitemap.xml`: Netlify je sam postavlja (varijabla `URL`, uvijek glavna domena), a na Vercelu `VERCEL_PROJECT_PRODUCTION_URL`. Lokalno se koristi `https://autoskola-drobo.netlify.app`, a može se pregaziti varijablom `SITE_URL`.
+- **Adresa sajta** za canonical, `og:url`, `robots.txt` i `sitemap.xml`: uvijek `https://edukacijadrobo.com` (u `scripts/prerender-plugin.mjs`), a može se pregaziti varijablom `SITE_URL`.
 - **`robots.txt` i `sitemap.xml`** nastaju pri buildu u `dist/`, pored `index.html`.
 - **Slike**: `public/img/hero-start.webp` (kadar od kojeg animacija počinje) i `hero-start-mobile.webp` (ista kompozicija kao animacija na telefonu) su glavna slika i učitavaju se odmah. `og-image.jpg` (1200×630) je slika za dijeljenje na društvenim mrežama: kadar s autom i slogan.
 
